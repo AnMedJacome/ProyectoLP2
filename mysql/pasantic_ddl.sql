@@ -2,16 +2,16 @@ CREATE DATABASE IF NOT EXISTS Pasantic;
 use Pasantic;
 
 CREATE TABLE IF NOT EXISTS Cuenta(
-	cedula int,
 	usuario varchar(20) not null,
     contraseña varchar(16),
     correo varchar(40),
-    PRIMARY KEY (cedula),
+    PRIMARY KEY (usuario),
     UNIQUE (contraseña,correo)
 );
 
 CREATE TABLE IF NOT EXISTS Empresa(
-    ruc int,
+	usuario varchar(20) not null,
+    ruc bigint,
     nombre varchar(25),
     e_descripcion varchar(500),
     direccion varchar(50),
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS Empresa(
 );
 
 CREATE TABLE IF NOT EXISTS Puesto(
-	empresa int,
+	empresa bigint,
     puesto_id int unsigned auto_increment,
     cargo varchar(25),
     p_descripcion varchar(500),
@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS Curriculum(
 );
 
 CREATE TABLE IF NOT EXISTS Pasante(
+	usuario varchar(20) not null,
     cedula int,
     carrera varchar(35),
     estado smallint,
@@ -60,12 +61,13 @@ CREATE TABLE IF NOT EXISTS Postulacion(
 );
 
 CREATE TABLE IF NOT EXISTS Educacion(
+	id int not null,
     estudiante int,
     institucion_id int,
     inicio date,
     graduacion date,
     promedio float,
-    PRIMARY KEY (estudiante, institucion_id)
+    PRIMARY KEY (id, estudiante, institucion_id)
 );
 
 CREATE TABLE IF NOT EXISTS Universidad(
@@ -100,7 +102,7 @@ CREATE TABLE IF NOT EXISTS Perfil(
     segundo_nombre varchar(25),
     apellido_materno varchar(35),
     apellido_paterno varchar(35),
-    sexo char(9),
+    sexo char(1),
     fechaNacimiento date,
     direccion varchar(50),
     telefono int,
