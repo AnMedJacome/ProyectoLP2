@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 CREATE DATABASE IF NOT EXISTS Pasantic;
 use Pasantic;
 
@@ -111,6 +110,3 @@ CREATE TABLE IF NOT EXISTS Perfil(
     PRIMARY KEY (cedula),
     UNIQUE (nombre, apellido_paterno, apellido_materno)
 );
-=======
-use Pasantic;
->>>>>>> 9fe9e8c651da39b3abfcfae6f3bc27fb5ffe3788
