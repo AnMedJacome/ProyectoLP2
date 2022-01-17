@@ -8,7 +8,7 @@ use Pasantic;
 -- ('postDOUG','xdxdxd','empresa_pos_doug@correo.com');
 
 -- INSERT INTO curriculum VALUES (0909090909,5,500.0,420.0,2),
--- (0908165351,6,650.0,0.0,null);
+-- (0905060806,6,650.0,0.0,null);
 
 -- INSERT INTO educacion VALUES (1,0909090909, 2, '1983-04-15','1991-01-25',19.5),
 -- (2,0909090909, 2, '1991-04-18','1998-01-20',18.9),
@@ -46,5 +46,5 @@ use Pasantic;
 -- (0905050505001,3,'ADMINISTRADOR(A) BD','Se busca candidato confiable para administrar la base de datos de la empresa.',
 -- 'Virtual','Se requiere que sepa administrar con seguridad los respectivos datos, escribir en base de datos MySQL, ....','COMPUTACION',2,0.0,'INFORMATICA');
 
--- INSERT INTO universidad VALUES (5,8.5,'2019-05-17'),
--- (6,8.2,'2018-05-16');
+-- INSERT INTO universidad VALUES (5,8.2,'2019-05-17'),
+-- (6,8.5,'2018-05-16');

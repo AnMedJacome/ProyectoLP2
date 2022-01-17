@@ -37,6 +37,18 @@ var query = "select nombre, apellido_materno,cargo from ("+
 "on pos.pasante=p.cedula) ps "+
 "inner join puesto p on ps.puesto_id = p.puesto_id";
 
+var prioquery = "select nombre, apellido_materno,cargo from ("+
+"select pos.cedula, pos.promedio, pos.fecha, pos.puesto_id, p.nombre, p.apellido_materno "+
+"from ("+
+"select u.promedio, post.fecha, post.puesto_id, c.cedula from curriculum c "+
+"inner join (postulacion post, universidad u) "+
+"on (post.pasante=c.cedula and c.universidad_id=u.universidad_id) "+
+") pos "+
+"inner join perfil p "+
+"on pos.cedula=p.cedula"+
+") pox "+
+"inner join puesto p on pox.puesto_id = p.puesto_id";
+
 app.get('/', (req, res) =>{
     res.send("Pantalla principal -> Ingrese a uno de los links para poder ver: orden"+
     "por prioridad (localhost:3001/prioridad) o filtrar los postulantes (localhost:3001/filtro)");
@@ -155,7 +167,7 @@ app.get('/prioridad', (req, res) =>{
         if(str){
             switch (str){
                 case 1:
-                    obtenerDatos(conexion, query+" where cargo = 'ADMINISTRADOR(A) BD'", (resultado) => {
+                    obtenerDatos(conexion, prioquery+" order by fecha asc", (resultado) => {
                         console.log("X----------------------------------------------------------------X\n");
                         console.log("  Escribir un número para ordenar por prioridad a los postulantes:\n"+
                         "\t\t1. Fecha de envío de solicitud     <<<\n"+
@@ -172,7 +184,7 @@ app.get('/prioridad', (req, res) =>{
                     });
                     break;
                 case 2:
-                    obtenerDatos(conexion, query+" where cargo = 'CONTADOR(A)'", (resultado) => {
+                    obtenerDatos(conexion, prioquery+" order by promedio desc", (resultado) => {
                         console.log("X----------------------------------------------------------------X\n");
                         console.log("  Escribir un número para ver los respectivos filtros:\n"+
                         "\t\t1. Fecha de envío de solicitud\n"+
@@ -189,7 +201,7 @@ app.get('/prioridad', (req, res) =>{
                     });
                     break;
                 case 3:
-                    obtenerDatos(conexion, query+" where cargo = 'DESARROLLADOR(A) WEB'", (resultado) => {
+                    obtenerDatos(conexion, prioquery, (resultado) => {
                         console.log("X----------------------------------------------------------------X\n");
                         console.log("  Escribir un número para ver los respectivos filtros:\n"+
                         "\t\t1. Fecha de envío de solicitud\n"+
@@ -228,6 +240,3 @@ app.get('/prioridad', (req, res) =>{
         }
     });
 });
-
-
-
