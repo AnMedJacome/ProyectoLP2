@@ -6,6 +6,8 @@ var cors = require('cors')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var pasanteRouter = require('./routes/pasante');
+var postulacionRouter = require('./routes/postulacion');
 
 var app = express();
 
@@ -18,6 +20,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/pasante', pasanteRouter);
+app.use('/postulacion', postulacionRouter);
 app.use('/users', usersRouter);
 
 module.exports = app;
