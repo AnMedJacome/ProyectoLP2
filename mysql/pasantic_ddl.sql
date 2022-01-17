@@ -3,10 +3,10 @@ use Pasantic;
 
 CREATE TABLE IF NOT EXISTS Cuenta(
 	usuario varchar(20) not null,
-    contraseña varchar(16),
+    clave varchar(16),
     correo varchar(40),
     PRIMARY KEY (usuario),
-    UNIQUE (contraseña,correo)
+    UNIQUE (clave,correo)
 );
 
 CREATE TABLE IF NOT EXISTS Empresa(
