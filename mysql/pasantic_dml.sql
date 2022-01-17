@@ -41,8 +41,10 @@ use Pasantic;
 
 -- INSERT INTO puesto VALUES (0905050505001,1,'CONTADOR(A)','Se busca candidato confiable para administrar los ingresos y egresos de la empresa.',
 -- 'Presencial','Se requiere que sepa registrar libros contables, ....','ECONOMIA',3,420.0,'ECONOMIA'),
--- (0905050505001,2,'ADMINISTADOR(A) BD','Se busca candidato confiable para administrar la base de datos de la empresa.',
--- 'Virtual','Se requiere que sepa administrar con seguridad los respectivos datos, ....','COMPUTACION',5,0.0,'INFORMATICA');
+-- (0905050505001,2,'DESARROLLADOR(A) WEB','Se busca candidato confiable para rediseñar el serivicio web de la empresa.',
+-- 'Virtual','Se requiere que sepa lenguaje Node.JS, ....','COMPUTACION',5,0.0,'INFORMATICA'),
+-- (0905050505001,3,'ADMINISTRADOR(A) BD','Se busca candidato confiable para administrar la base de datos de la empresa.',
+-- 'Virtual','Se requiere que sepa administrar con seguridad los respectivos datos, escribir en base de datos MySQL, ....','COMPUTACION',2,0.0,'INFORMATICA');
 
 -- INSERT INTO universidad VALUES (5,8.5,'2019-05-17'),
 -- (6,8.2,'2018-05-16');
