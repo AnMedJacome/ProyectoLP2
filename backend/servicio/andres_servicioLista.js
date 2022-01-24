@@ -12,7 +12,7 @@ app.use(express.json());
 const conexion = mysql.createPool({
     host: process.env.HOST,
     user: process.env.USER,
-    password: process.env.PASSWORD,
+    password: null,
     database: process.env.DATABASE,
 });
 
