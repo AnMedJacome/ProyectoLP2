@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:passantic/ui/views/login/login.dart';
+import 'package:passantic/ui/views/natalia/homeEmpresa.dart';
+import 'package:passantic/ui/views/register/register_view.dart';
 import 'package:passantic/ui/views/splash/splash.dart';
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings){
@@ -10,6 +12,10 @@ class Routes {
         return MaterialPageRoute(builder: (_) => SplashView());
       case '/login':
         return MaterialPageRoute(builder: (_) => LoginView());
+      case '/register':
+        return MaterialPageRoute(builder: (_) => Registerview());
+      case '/home':
+        return MaterialPageRoute(builder: (_) => HomeView());
       default:
         return _errorRoute();
     }
