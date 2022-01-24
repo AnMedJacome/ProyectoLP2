@@ -89,9 +89,9 @@ class _LoginView extends State<LoginView> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      //Navigator.of(context).pushReplacementNamed("/register")
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('FALTA')));
+                      Navigator.of(context).pushReplacementNamed("/register");
+                      /*ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('FALTA')));*/
                     },
                     style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.only(top: 16, bottom: 16),

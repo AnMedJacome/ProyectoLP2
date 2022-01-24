@@ -29,7 +29,6 @@ module.exports = function(sequelize, DataTypes) {
       },
       {
         name: "clave",
-        unique: true,
         using: "BTREE",
         fields: [
           { name: "clave" },

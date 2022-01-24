@@ -8,7 +8,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var pasanteRouter = require('./routes/pasante');
 var postulacionRouter = require('./routes/postulacion');
-
+var empresaRouter = require('./routes/empresa');
+var puestoRouter = require('./routes/puesto');
 var app = express();
 
 app.use(cors());
@@ -22,6 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/pasante', pasanteRouter);
 app.use('/postulacion', postulacionRouter);
+app.use('/empresa', empresaRouter);
+app.use('/puestos', puestoRouter);
 app.use('/users', usersRouter);
 
 module.exports = app;

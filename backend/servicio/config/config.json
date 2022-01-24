@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "root",
+    "password": "asdPRT12345678",
     "database": "pasantic",
     "host": "127.0.0.1",
     "dialect": "mysql"

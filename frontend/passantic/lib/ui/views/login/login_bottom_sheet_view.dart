@@ -27,7 +27,7 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text(
-            "Observador",
+            "Iniciar sesión",
             style: TextStyle(
               fontSize: 22,
               color: AppColors.primaryColor,
@@ -40,12 +40,12 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
           ),
           TextField(
             controller: _controllerUser,
-            keyboardType: TextInputType.emailAddress,
+            keyboardType: TextInputType.name,
             decoration: InputDecoration(
                 prefixIcon: Icon(Icons.person_rounded),
                 contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                hintText: "Ingrese su Email",
-                labelText: "Email",
+                hintText: "Ingrese su Usuario",
+                labelText: "Usuario",
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(32.0))),
           ),
@@ -61,17 +61,18 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
             margin: EdgeInsets.only(left: 8, right: 8),
             child: ElevatedButton(
               onPressed: () {
-                      //Navigator.of(context).pushReplacementNamed("/home")
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('FALTA')));
-                    },
+                Navigator.of(context).pushReplacementNamed("/home");
+              },
               style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.only(top: 16, bottom: 16),
                   textStyle: TextStyle(fontSize: 16, color: Colors.white),
                   primary: AppColors.primaryColor,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30))),
-              child: Text("Ingresar",style: TextStyle(color: AppColors.text_dark),),
+              child: Text(
+                "Ingresar",
+                style: TextStyle(color: AppColors.text_dark),
+              ),
             ),
           ),
         ],
@@ -79,7 +80,6 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
     );
   }
 }
-
 
 class PasswordInput extends StatefulWidget {
   final TextEditingController controller = TextEditingController();
@@ -109,7 +109,7 @@ class _PasswordInput extends State<PasswordInput> {
     setState(() {
       _hiddenPassword = !_hiddenPassword;
       _currentVisibility =
-      (_hiddenPassword) ? Icons.visibility_off : Icons.visibility;
+          (_hiddenPassword) ? Icons.visibility_off : Icons.visibility;
     });
   }
 
@@ -130,8 +130,7 @@ class _PasswordInput extends State<PasswordInput> {
           hintText: widget.hint,
           labelText: widget.label,
           border:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
   }
 }
-
