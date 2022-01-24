@@ -36,9 +36,9 @@ router.post('/auth', async (req, res) => {
   if(usuario && clave) {
     conexion.query('SELECT * FROM cuenta WHERE usuario = ?',[usuario],async (errors, resul) => {
       if(resul.length==0 || clave!=resul[0].clave){
-        res.send("Usuario o clave incorrectos")
+        res.send("usuario o clave incorrecto")
       }else{
-        res.send("LOGIN CORRECTO")
+        res.send("LOGIN")
       }
     })
   }

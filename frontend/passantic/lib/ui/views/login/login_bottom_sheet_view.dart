@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:passantic/constants/colors.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
 
 class LoginBottomSheet extends StatefulWidget {
   @override
@@ -9,6 +12,24 @@ class LoginBottomSheet extends StatefulWidget {
 class _LoginBottomSheet extends State<LoginBottomSheet> {
   final TextEditingController _controllerUser = TextEditingController();
   final PasswordInput _passwordInput = PasswordInput();
+  makeAuth(String usuario, String clave) async {
+    try {
+    http.Response response = await http.post(
+        Uri.parse('http://localhost:3001/users/auth'),
+        body: {"usuario": usuario, "clave": clave});
+    debugPrint(response.body);
+    if(response.body=="LOGIN"){
+      Navigator.of(context).pushReplacementNamed("/home");
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('NO EXISTE EL USUARIO',
+              textAlign: TextAlign.center)));
+    }
+    }catch (e) {
+      debugPrint(e.toString());
+    }
+
+  }
 
   @override
   void initState() {
@@ -61,7 +82,8 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
             margin: EdgeInsets.only(left: 8, right: 8),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pushReplacementNamed("/home");
+                    makeAuth(_controllerUser.text, _passwordInput.controller.text);
+                
               },
               style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.only(top: 16, bottom: 16),
