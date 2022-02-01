@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:passantic/ui/views/login/login.dart';
 import 'package:passantic/ui/views/natalia/homeEmpresa.dart';
+import 'package:passantic/ui/views/register/register_pasante_view.dart';
 import 'package:passantic/ui/views/register/register_view.dart';
 import 'package:passantic/ui/views/splash/splash.dart';
 class Routes {
@@ -14,6 +15,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => LoginView());
       case '/register':
         return MaterialPageRoute(builder: (_) => Registerview());
+      case '/registerPasante':
+        return MaterialPageRoute(builder: (_) => RegisterPasanteview());
       case '/home':
         return MaterialPageRoute(builder: (_) => HomeView());
       default:

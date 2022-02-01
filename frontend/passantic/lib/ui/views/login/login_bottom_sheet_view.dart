@@ -14,21 +14,33 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
   final PasswordInput _passwordInput = PasswordInput();
   makeAuth(String usuario, String clave) async {
     try {
-    http.Response response = await http.post(
-        Uri.parse('http://localhost:3001/users/auth'),
-        body: {"usuario": usuario, "clave": clave});
-    debugPrint(response.body);
-    if(response.body=="LOGIN"){
-      Navigator.of(context).pushReplacementNamed("/home");
-    }else{
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('NO EXISTE EL USUARIO',
-              textAlign: TextAlign.center)));
-    }
-    }catch (e) {
+      http.Response response = await http.post(
+          Uri.parse('http://localhost:3001/users/auth'),
+          body: {"usuario": usuario, "clave": clave});
+      debugPrint(response.body);
+      if (response.body == "LOGIN") {
+        Navigator.of(context).pushReplacementNamed("/home");
+      } else {
+        showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('ALERTA'),
+            content: const Text('NO EXISTE EL USUARIO'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context, 'OK'),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+       /* ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content:
+                Text('NO EXISTE EL USUARIO', textAlign: TextAlign.center)));*/
+      }
+    } catch (e) {
       debugPrint(e.toString());
     }
-
   }
 
   @override
@@ -82,8 +94,7 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
             margin: EdgeInsets.only(left: 8, right: 8),
             child: ElevatedButton(
               onPressed: () {
-                    makeAuth(_controllerUser.text, _passwordInput.controller.text);
-                
+                makeAuth(_controllerUser.text, _passwordInput.controller.text);
               },
               style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.only(top: 16, bottom: 16),

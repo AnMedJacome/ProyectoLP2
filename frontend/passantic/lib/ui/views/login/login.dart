@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:passantic/constants/colors.dart';
+import 'package:passantic/ui/views/register/register_bottom_sheet_view.dart';
 import 'package:passantic/utils/util.dart';
 
 import 'login_bottom_sheet_view.dart';
@@ -38,7 +39,7 @@ class _LoginView extends State<LoginView> {
           height: Util.sizeScreen(context: context).height,
           child: Padding(
             padding:
-            const EdgeInsets.only(left: 16, right: 16, top: 48, bottom: 40),
+                const EdgeInsets.only(left: 16, right: 16, top: 48, bottom: 40),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -88,11 +89,12 @@ class _LoginView extends State<LoginView> {
                 Container(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacementNamed("/register");
+                    onPressed: _onRegisterTap,/*() {
+                      
+                       Navigator.of(context).pushReplacementNamed("/register");*/
                       /*ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('FALTA')));*/
-                    },
+                        const SnackBar(content: Text('FALTA')));
+                    },*/
                     style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.only(top: 16, bottom: 16),
                         textStyle: TextStyle(fontSize: 16, color: Colors.white),
@@ -113,5 +115,9 @@ class _LoginView extends State<LoginView> {
 
   void _onLoginTap() {
     Util.showBottomSheet(context: context, bottomSheet: LoginBottomSheet());
+  }
+
+  void _onRegisterTap() {
+    Util.showBottomSheet(context: context, bottomSheet: RegisterBottomSheet());
   }
 }

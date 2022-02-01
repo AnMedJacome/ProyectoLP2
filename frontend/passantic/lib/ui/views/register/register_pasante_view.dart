@@ -2,15 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:passantic/constants/colors.dart';
 
-class Registerview extends StatefulWidget {
-  const Registerview({Key? key}) : super(key: key);
+class RegisterPasanteview extends StatefulWidget {
+  const RegisterPasanteview({Key? key}) : super(key: key);
 
   @override
-  _Registerview createState() => _Registerview();
+  _RegisterPasanteview createState() => _RegisterPasanteview();
 }
 
-class _Registerview extends State<Registerview> {
+class _RegisterPasanteview extends State<RegisterPasanteview> {
   int _currentStep = 0;
+  final TextEditingController _controllerUser = TextEditingController();
+  final TextEditingController _controllerCedula = TextEditingController();
+  final TextEditingController _controllerCarrera = TextEditingController();
   final PasswordInput _passwordInput = PasswordInput();
   @override
   void initState() {
@@ -28,7 +31,7 @@ class _Registerview extends State<Registerview> {
         backgroundColor: AppColors.background,
         elevation: 0,
         title: Text(
-          "Registrar empresa",
+          "Registrar pasante",
           style: TextStyle(color: AppColors.text_light),
         ),
       ),
@@ -82,15 +85,21 @@ class _Registerview extends State<Registerview> {
 
   List<Step> _form() => [
      Step(
-      title: const Text("Usuario de la empresa"),
+      title: const Text("Usuario"),
       isActive: _currentStep >= 0,
       content: Column(
         children: [
           Container(
             margin: EdgeInsets.only(bottom: 20, top: 20),
-            child: TextField(
+            child: TextFormField(
               key: ValueKey("usuario"),
-              controller: TextEditingController(text: ""),
+              keyboardType: TextInputType.name,
+                validator: (value) {
+                  if (value!.isEmpty || value.length < 1) {
+                    return 'Please enter name';
+                  }
+                },
+              controller: _controllerUser,
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.person_rounded),
                   labelText: "Usuario",
@@ -111,15 +120,27 @@ class _Registerview extends State<Registerview> {
         children: [
           Container(
             margin: EdgeInsets.only(bottom: 20, top: 20),
+            child: _passwordInput
+          )
+        ],
+      ),
+    ),
+    Step(
+      title: const Text("Cedula"),
+      isActive: _currentStep >= 0,
+      content: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 20, top: 20),
             child: TextField(
-              key: ValueKey("clave"),
+              key: ValueKey("cedula"),
               controller: TextEditingController(text: ""),
               decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.password),
-                  labelText: "Clave",
+                  prefixIcon: Icon(Icons.home_work),
+                  labelText: "Cedula",
                   contentPadding:
                   EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  hintText: "Ingrese la contraseña",
+                  hintText: "Ingrese su cedula",
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.0))),
             ),
@@ -128,44 +149,21 @@ class _Registerview extends State<Registerview> {
       ),
     ),
     Step(
-      title: const Text("RUC de la empresa"),
+      title: const Text("Carrrera"),
       isActive: _currentStep >= 0,
       content: Column(
         children: [
           Container(
             margin: EdgeInsets.only(bottom: 20, top: 20),
             child: TextField(
-              key: ValueKey("ruc"),
+              key: ValueKey("carrera"),
               controller: TextEditingController(text: ""),
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.home_work),
-                  labelText: "RUC",
+                  labelText: "Carrera",
                   contentPadding:
                   EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  hintText: "Ingrese el RUC de la empresa",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16.0))),
-            ),
-          )
-        ],
-      ),
-    ),
-    Step(
-      title: const Text("Nombre de la empresa"),
-      isActive: _currentStep >= 0,
-      content: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 20, top: 20),
-            child: TextField(
-              key: ValueKey("nombre"),
-              controller: TextEditingController(text: ""),
-              decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.home_work),
-                  labelText: "Nombre",
-                  contentPadding:
-                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  hintText: "Ingrese el nombre completo de la empresa",
+                  hintText: "Ingrese su carrera",
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.0))),
             ),
@@ -197,104 +195,12 @@ class _Registerview extends State<Registerview> {
         ],
       ),
     ),
-    Step(
-      title: const Text("Telefono"),
-      isActive: _currentStep >= 0,
-      content: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 20, top: 20),
-            child: TextField(
-              key: ValueKey("telefono"),
-              controller: TextEditingController(text: ""),
-              decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.phone),
-                  labelText: "Telefono",
-                  contentPadding:
-                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  hintText: "Ingrese su telefono",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16.0))),
-            ),
-          )
-        ],
-      ),
-    ),
-     Step(
-      title: const Text("Descripción"),
-      isActive: _currentStep >= 0,
-      content: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 20, top: 20),
-            child: TextField(
-              key: ValueKey("e_descripcion"),
-              controller: TextEditingController(text: ""),
-              decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.fence_sharp),
-                  labelText: "Descripción",
-                  contentPadding:
-                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  hintText: "Ingrese la descripción de la empresa",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16.0))),
-            ),
-          )
-        ],
-      ),
-    ),
-    Step(
-      title: const Text("Dirección"),
-      isActive: _currentStep >= 0,
-      content: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 20, top: 20),
-            child: TextField(
-              key: ValueKey("direccion"),
-              controller: TextEditingController(text: ""),
-              decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.fence_sharp),
-                  labelText: "Dirección",
-                  contentPadding:
-                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  hintText: "Ingrese la Dirección de la empresa",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16.0))),
-            ),
-          )
-        ],
-      ),
-    ),
-      Step(
-      title: const Text("Página web"),
-      isActive: _currentStep >= 0,
-      content: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 20, top: 20),
-            child: TextField(
-              key: ValueKey("sitio_web"),
-              controller: TextEditingController(text: ""),
-              decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.fence_sharp),
-                  labelText: "Sitio web",
-                  contentPadding:
-                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  hintText: "Ingrese el sitio web de la empresa",
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16.0))),
-            ),
-          )
-        ],
-      ),
-    )
   ];
 }
 
 class PasswordInput extends StatefulWidget {
   final TextEditingController controller = TextEditingController();
-  
+
   String hint;
   String label;
 
