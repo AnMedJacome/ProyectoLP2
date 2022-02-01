@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Empresa(
 CREATE TABLE IF NOT EXISTS Puesto(
 	empresa bigint,
     puesto_id int unsigned auto_increment,
-    cargo varchar(25),
+    cargo varchar(50),
     p_descripcion varchar(500),
     modalidad varchar(15),
     conocimiento_requerido varchar(500),
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS Curriculum(
     universidad_id int,
     expectativa double,
     ultimo_ingreso double,
-    empleo_id int,
+    mas_informacion longblob,
     PRIMARY KEY (cedula)
 );
 
@@ -61,13 +61,13 @@ CREATE TABLE IF NOT EXISTS Postulacion(
 );
 
 CREATE TABLE IF NOT EXISTS Educacion(
-	id int not null,
+	id int not null auto_increment,
     estudiante int,
     institucion_id int,
     inicio date,
     graduacion date,
     promedio float,
-    PRIMARY KEY (id, estudiante, institucion_id)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS Universidad(
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS Universidad(
 );
 
 CREATE TABLE IF NOT EXISTS Institucion(
-    institucion_id int ,
+    institucion_id int auto_increment,
     nombre varchar(45) ,
     direccion varchar(50),
     telefono int,
@@ -86,7 +86,8 @@ CREATE TABLE IF NOT EXISTS Institucion(
 );
 
 CREATE TABLE IF NOT EXISTS Empleo(
-    id int ,
+    id int auto_increment,
+    trabajador int,
     empresa varchar(45) ,
     actual boolean,
     pais varchar(50),
@@ -109,6 +110,5 @@ CREATE TABLE IF NOT EXISTS Perfil(
     paisNacimiento char(35),
     nacionalidad varchar(35),
     foto blob,
-    PRIMARY KEY (cedula),
-    UNIQUE (nombre, apellido_paterno, apellido_materno)
+    PRIMARY KEY (cedula)
 );

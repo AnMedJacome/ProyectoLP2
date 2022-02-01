@@ -30,12 +30,12 @@ app.listen(3001, () =>{
 });
 
 
-var query = "select nombre, apellido_materno,cargo from ("+
-"select pos.puesto_id, p.nombre, p.apellido_materno "+
+var query = "select cedula, nombre, apellido_paterno, apellido_materno, cargo, foto, fecha from ( "+
+"select pos.puesto_id, p.nombre, p.apellido_materno, p.apellido_paterno, p.foto, pos.fecha, p.cedula "+
 "from postulacion pos "+
 "inner join perfil p " +
 "on pos.pasante=p.cedula) ps "+
-"inner join puesto p on ps.puesto_id = p.puesto_id";
+"inner join puesto p on ps.puesto_id = p.puesto_id ";
 
 var prioquery = "select nombre, apellido_materno,cargo from ("+
 "select pos.cedula, pos.promedio, pos.fecha, pos.puesto_id, p.nombre, p.apellido_materno "+
@@ -50,13 +50,15 @@ var prioquery = "select nombre, apellido_materno,cargo from ("+
 "inner join puesto p on pox.puesto_id = p.puesto_id";
 
 app.get('/', (req, res) =>{
-    res.send("Pantalla principal -> Ingrese a uno de los links para poder ver: orden"+
+    res.json("Pantalla principal -> Ingrese a uno de los links para poder ver: orden"+
     "por prioridad (localhost:3001/prioridad) o filtrar los postulantes (localhost:3001/filtro)");
 });
 
 app.get('/filtro', (req, res) =>{
-    res.send("Pantalla principal -> Revisar en la terminal la lista de los postulantes para la empresa "+empresa+". Para regresar, solo vaya al link  'localhost:3001'");
-    var stdin = process.openStdin();
+    obtenerDatos(conexion, query, (resultado) => {
+        res.json(resultado);
+    });
+    /*var stdin = process.openStdin();
     stdin.addListener("data", (d) => {
         var str = parseInt(d.toString());
         if(str){
@@ -156,12 +158,12 @@ app.get('/filtro', (req, res) =>{
             console.log("X----------------------------------------------------------------X");
             console.log("Su número:");
         }
-    });
+    });*/
 });
 
 app.get('/prioridad', (req, res) =>{
     res.send("Pantalla principal -> Revisar en la terminal la lista de los postulantes para la empresa "+empresa+". Debe elegir su orden de prioridad. Para regresar, solo vaya al link  'localhost:3001'");
-    var stdin = process.openStdin();
+    /*var stdin = process.openStdin();
     stdin.addListener("data", (d) => {
         var str = parseInt(d.toString());
         if(str){
@@ -238,5 +240,6 @@ app.get('/prioridad', (req, res) =>{
             console.log("X----------------------------------------------------------------X");
             console.log("Su número:");
         }
-    });
+    });*/
 });
+
