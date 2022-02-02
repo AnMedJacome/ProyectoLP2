@@ -24,7 +24,7 @@ router.post('/', function (req, res,next) {
       res.send(errors)
     }else{
       console.log("Se ha creado el usuario con éxito")
-      res.send("Se ha creado el usuario con éxito")
+      res.send("Usuario creado")
     }
   })
  

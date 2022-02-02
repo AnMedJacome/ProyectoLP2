@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     direccion: {
       type: DataTypes.STRING(50),
       allowNull: true
-    },
+    }, 
     telefono: {
       type: DataTypes.INTEGER,
       allowNull: true
