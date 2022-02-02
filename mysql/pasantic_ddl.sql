@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS Puesto(
 
 CREATE TABLE IF NOT EXISTS Curriculum(
     cedula int,
-    universidad_id int,
     expectativa double,
     ultimo_ingreso double,
     mas_informacion longblob,
@@ -71,10 +70,11 @@ CREATE TABLE IF NOT EXISTS Educacion(
 );
 
 CREATE TABLE IF NOT EXISTS Universidad(
+	cedula int,
     universidad_id int,
     promedio float ,
     ingreso date ,
-    PRIMARY KEY (universidad_id)
+    PRIMARY KEY (cedula)
 );
 
 CREATE TABLE IF NOT EXISTS Institucion(

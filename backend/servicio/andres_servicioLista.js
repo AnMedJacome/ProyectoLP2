@@ -19,14 +19,7 @@ const conexion = mysql.createPool({
 var empresa;
 
 app.listen(3001, () =>{
-    let qy = "select e.nombre, pus.cargo from empresa e inner join puesto pus on e.ruc = pus.empresa where e.ruc = 0905050505001"
-    obtenerDatos(conexion, qy, (resultado) => {
-        empresa = resultado[0]["nombre"];
-        console.log("Pantalla - LISTA DE POSTULANTES PARA LA "+empresa);
-        console.log("Ingrese a uno de los links para poder ver:\n"+
-        "\t\t> Orden por prioridad (localhost:3001/prioridad)\n"+
-        "\t\t> Filtrar los postulantes (localhost:3001/filtro)")
-    });
+    console.log("CONEXIÓN ESTABLECIDA!!");
 });
 
 
@@ -37,17 +30,12 @@ var query = "select cedula, nombre, apellido_paterno, apellido_materno, cargo, f
 "on pos.pasante=p.cedula) ps "+
 "inner join puesto p on ps.puesto_id = p.puesto_id ";
 
-var prioquery = "select nombre, apellido_materno,cargo from ("+
-"select pos.cedula, pos.promedio, pos.fecha, pos.puesto_id, p.nombre, p.apellido_materno "+
-"from ("+
-"select u.promedio, post.fecha, post.puesto_id, c.cedula from curriculum c "+
-"inner join (postulacion post, universidad u) "+
-"on (post.pasante=c.cedula and c.universidad_id=u.universidad_id) "+
-") pos "+
-"inner join perfil p "+
-"on pos.cedula=p.cedula"+
+var prioquery = "select nombre, apellido_materno, cargo, promedio, fecha, foto, cedula from ( "+
+"select u.promedio, post.fecha, post.puesto_id, c.cedula, p.nombre, p.apellido_paterno, p.apellido_materno, p.foto from curriculum c "+
+"inner join (postulacion post, universidad u, perfil p) "+
+"on (post.pasante=c.cedula and c.universidad_id=u.universidad_id and c.cedula=p.cedula) "+
 ") pox "+
-"inner join puesto p on pox.puesto_id = p.puesto_id";
+"inner join puesto p on pox.puesto_id = p.puesto_id ";
 
 app.get('/', (req, res) =>{
     res.json("Pantalla principal -> Ingrese a uno de los links para poder ver: orden"+
@@ -55,191 +43,133 @@ app.get('/', (req, res) =>{
 });
 
 app.get('/filtro', (req, res) =>{
-    obtenerDatos(conexion, query, (resultado) => {
+    var qy;
+    switch (req.query.cargo){
+        case 'BD':
+            qy = query + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS'";
+            break;
+        case 'DW':
+            qy = query + " where cargo = 'DESARROLLADOR(A) WEB'";
+            break;
+        case 'CONT':
+            qy = query + " where cargo = 'CONTADOR(A)'";
+            break;
+        default:
+            qy = query;
+            break;
+    }
+    obtenerDatos(conexion, qy, (resultado) => {
         res.json(resultado);
     });
-    /*var stdin = process.openStdin();
-    stdin.addListener("data", (d) => {
-        var str = parseInt(d.toString());
-        if(str){
-            switch (str){
-                case 1:
-                    obtenerDatos(conexion, query, (resultado) => {
-                        console.log("X----------------------------------------------------------------X\n");
-                        console.log("  Escribir un número para ver los respectivos filtros:\n"+
-                        "\t\t1. Todos                             <<<\n"+
-                        "\t\t2. Administradores de base de datos\n"+
-                        "\t\t3. Contadores\n"+
-                        "\t\t4. Desarrolladores web\n");
-                        var contador = 0;
-                        resultado.forEach(element => {
-                            console.log("Nombre: "+element["nombre"]+"\t- Apellidos: "+element["apellido_materno"]+"\t - Cargo: "+element["cargo"]);
-                            contador++;
-                        });
-                        if(contador == 0) console.log("No hay postulantes en general.\nVuelva luego.");
-                        console.log("\nX----------------------------------------------------------------X");
-                        console.log("Su número:");
-                    });
-                    break;
-                case 2:
-                    obtenerDatos(conexion, query+" where cargo = 'ADMINISTRADOR(A) BD'", (resultado) => {
-                        console.log("X----------------------------------------------------------------X\n");
-                        console.log("  Escribir un número para ver los respectivos filtros:\n"+
-                        "\t\t1. Todos\n"+
-                        "\t\t2. Administradores de base de datos  <<<\n"+
-                        "\t\t3. Contadores\n"+
-                        "\t\t4. Desarrolladores web\n");
-                        var contador = 0;
-                        resultado.forEach(element => {
-                            console.log("Nombre: "+element["nombre"]+"\t- Apellidos: "+element["apellido_materno"]+"\t - Cargo: "+element["cargo"]);
-                            contador++;
-                        });
-                        if(contador == 0) console.log("No hay postulantes en general.\nVuelva luego.");
-                        console.log("\nX----------------------------------------------------------------X");
-                        console.log("Su número:");
-                    });
-                    break;
-                case 3:
-                    obtenerDatos(conexion, query+" where cargo = 'CONTADOR(A)'", (resultado) => {
-                        console.log("X----------------------------------------------------------------X\n");
-                        console.log("  Escribir un número para ver los respectivos filtros:\n"+
-                        "\t\t1. Todos\n"+
-                        "\t\t2. Administradores de base de datos\n"+
-                        "\t\t3. Contadores                        <<<\n"+
-                        "\t\t4. Desarrolladores web\n");
-                        var contador = 0;
-                        resultado.forEach(element => {
-                            console.log("Nombre: "+element["nombre"]+"\t- Apellidos: "+element["apellido_materno"]+"\t - Cargo: "+element["cargo"]);
-                            contador++;
-                        });
-                        if(contador == 0) console.log("No hay postulantes en general.\nVuelva luego.");
-                        console.log("\nX----------------------------------------------------------------X");
-                        console.log("Su número:");
-                    });
-                    break;
-                case 4:
-                    obtenerDatos(conexion, query+" where cargo = 'DESARROLLADOR(A) WEB'", (resultado) => {
-                        console.log("X----------------------------------------------------------------X\n");
-                        console.log("  Escribir un número para ver los respectivos filtros:\n"+
-                        "\t\t1. Todos\n"+
-                        "\t\t2. Administradores de base de datos\n"+
-                        "\t\t3. Contadores\n"+
-                        "\t\t4. Desarrolladores web               <<<\n");
-                        var contador = 0;
-                        resultado.forEach(element => {
-                            console.log("Nombre: "+element["nombre"]+"\t- Apellidos: "+element["apellido_materno"]+"\t - Cargo: "+element["cargo"]);
-                            contador++;
-                        });
-                        if(contador == 0) console.log("No hay postulantes para este cargo.\nVuelva luego.");
-                        console.log("\nX----------------------------------------------------------------X");
-                        console.log("Su número:");
-                    });
-                    break;
-                default:
-                    console.log("X----------------------------------------------------------------X");
-                    console.log("  Ingrese uno de los números en pantalla\n");
-                    console.log("  Escribir un número para ver los respectivos filtros:\n"+
-                        "\t\t1. Todos\n"+
-                        "\t\t2. Administradores de base de datos\n"+
-                        "\t\t3. Contadores\n"+
-                        "\t\t4. Desarrolladores web\n");
-                    console.log("X----------------------------------------------------------------X");
-                    console.log("Su número:");
-                    break;
-            }
-        } else {
-            console.log("X----------------------------------------------------------------X");
-            console.log("  No ha ingresado un número\n");
-            console.log("  Escribir un número para ver los respectivos filtros:\n"+
-                "\t\t1. Todos\n"+
-                "\t\t2. Administradores de base de datos\n"+
-                "\t\t3. Contadores\n"+
-                "\t\t4. Desarrolladores web\n");
-            console.log("X----------------------------------------------------------------X");
-            console.log("Su número:");
-        }
-    });*/
+});
+
+app.post('/filtro', (req, res, next) =>{
+    var qy;
+    switch (req.query.cargo){
+        case 'BD':
+            qy = query + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS'";
+            break;
+        case 'DW':
+            qy = query + " where cargo = 'DESARROLLADOR(A) WEB'";
+            break;
+        case 'CONT':
+            qy = query + " where cargo = 'CONTADOR(A)'";
+            break;
+        default:
+            qy = query;
+            break;
+    }
+    obtenerDatos(conexion, qy, (resultado) => {
+        res.json(resultado);
+    });
+});
+
+app.post('/prioridad', (req, res, next) =>{
+    var qy;
+    switch (req.query.cargo){
+        case 'BDP1':
+            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by fecha asc";
+            break;
+        case 'DWP1':
+            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by fecha asc";
+            break;
+        case 'CONTP1':
+            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by fecha asc";
+            break;
+        case 'TP1':
+            qy = prioquery  + " order by fecha asc";
+            break;
+        case 'BDP2':
+            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
+            break;
+        case 'DWP2':
+            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
+            break;
+        case 'CONTP2':
+            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by promedio desc";
+            break;
+        case 'TP2':
+            qy = prioquery  + " order by promedio desc";
+            break;
+        case 'BDP':
+            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
+            break;
+        case 'DWP':
+            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
+            break;
+        case 'CONTP':
+            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by promedio desc";
+            break;
+        default:
+            qy = prioquery ;
+            break;
+    }
+    obtenerDatos(conexion, qy, (resultado) => {
+        res.json(resultado);
+    });
 });
 
 app.get('/prioridad', (req, res) =>{
-    res.send("Pantalla principal -> Revisar en la terminal la lista de los postulantes para la empresa "+empresa+". Debe elegir su orden de prioridad. Para regresar, solo vaya al link  'localhost:3001'");
-    /*var stdin = process.openStdin();
-    stdin.addListener("data", (d) => {
-        var str = parseInt(d.toString());
-        if(str){
-            switch (str){
-                case 1:
-                    obtenerDatos(conexion, prioquery+" order by fecha asc", (resultado) => {
-                        console.log("X----------------------------------------------------------------X\n");
-                        console.log("  Escribir un número para ordenar por prioridad a los postulantes:\n"+
-                        "\t\t1. Fecha de envío de solicitud     <<<\n"+
-                        "\t\t2. Promedio universitario actual\n"+
-                        "\t\t3. Sin prioridad\n");
-                        var contador = 0;
-                        resultado.forEach(element => {
-                            console.log("Nombre: "+element["nombre"]+"\t- Apellidos: "+element["apellido_materno"]+"\t - Cargo: "+element["cargo"]);
-                            contador++;
-                        });
-                        if(contador == 0) console.log("No hay postulantes en general.\nVuelva luego.");
-                        console.log("\nX----------------------------------------------------------------X");
-                        console.log("Su número:");
-                    });
-                    break;
-                case 2:
-                    obtenerDatos(conexion, prioquery+" order by promedio desc", (resultado) => {
-                        console.log("X----------------------------------------------------------------X\n");
-                        console.log("  Escribir un número para ver los respectivos filtros:\n"+
-                        "\t\t1. Fecha de envío de solicitud\n"+
-                        "\t\t2. Promedio universitario actual   <<<\n"+
-                        "\t\t3. Sin prioridad\n");
-                        var contador = 0;
-                        resultado.forEach(element => {
-                            console.log("Nombre: "+element["nombre"]+"\t- Apellidos: "+element["apellido_materno"]+"\t - Cargo: "+element["cargo"]);
-                            contador++;
-                        });
-                        if(contador == 0) console.log("No hay postulantes en general.\nVuelva luego.");
-                        console.log("\nX----------------------------------------------------------------X");
-                        console.log("Su número:");
-                    });
-                    break;
-                case 3:
-                    obtenerDatos(conexion, prioquery, (resultado) => {
-                        console.log("X----------------------------------------------------------------X\n");
-                        console.log("  Escribir un número para ver los respectivos filtros:\n"+
-                        "\t\t1. Fecha de envío de solicitud\n"+
-                        "\t\t2. Promedio universitario actual\n"+
-                        "\t\t3. Sin prioridad                   <<<\n");
-                        var contador = 0;
-                        resultado.forEach(element => {
-                            console.log("Nombre: "+element["nombre"]+"\t- Apellidos: "+element["apellido_materno"]+"\t - Cargo: "+element["cargo"]);
-                            contador++;
-                        });
-                        if(contador == 0) console.log("No hay postulantes para este cargo.\nVuelva luego.");
-                        console.log("\nX----------------------------------------------------------------X");
-                        console.log("Su número:");
-                    });
-                    break;
-                default:
-                    console.log("X----------------------------------------------------------------X");
-                    console.log("  Ingrese uno de los números en pantalla\n");
-                    console.log("  Escribir un número para ver los respectivos filtros:\n"+
-                    "\t\t1. Fecha de envío de solicitud\n"+
-                    "\t\t2. Promedio universitario actual\n"+
-                    "\t\t3. Sin prioridad\n");
-                    console.log("X----------------------------------------------------------------X");
-                    console.log("Su número:");
-                    break;
-            }
-        } else {
-            console.log("X----------------------------------------------------------------X");
-            console.log("  No ha ingresado un número\n");
-            console.log("  Escribir un número para ver los respectivos filtros:\n"+
-            "\t\t1. Fecha de envío de solicitud\n"+
-            "\t\t2. Promedio universitario actual\n"+
-            "\t\t3. Sin prioridad\n");
-            console.log("X----------------------------------------------------------------X");
-            console.log("Su número:");
-        }
-    });*/
+    var qy;
+    switch (req.query.cargo){
+        case 'BDP1':
+            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by fecha asc";
+            break;
+        case 'DWP1':
+            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by fecha asc";
+            break;
+        case 'CONTP1':
+            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by fecha asc";
+            break;
+        case 'TP1':
+            qy = prioquery  + " order by fecha asc";
+            break;
+        case 'BDP2':
+            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
+            break;
+        case 'DWP2':
+            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
+            break;
+        case 'CONTP2':
+            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by promedio desc";
+            break;
+        case 'TP2':
+            qy = prioquery  + " order by promedio desc";
+            break;
+        case 'BDP':
+            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
+            break;
+        case 'DWP':
+            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
+            break;
+        case 'CONTP':
+            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by promedio desc";
+            break;
+        default:
+            qy = prioquery ;
+            break;
+    }
+    obtenerDatos(conexion, qy, (resultado) => {
+        res.json(resultado);
+    });
 });
-

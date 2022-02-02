@@ -3,12 +3,10 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:passantic/constants/colors.dart';
 import 'package:http/http.dart' as http;
-import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 
@@ -62,22 +60,38 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String dropdownValue = 'Todos';
+  String dropdownFiltro = 'TODOS';
+  String dropdownPriori = 'NINGUNO';
   List postulantes = [];
 
-  getUsers() async{
-    http.Response response = await http.get(Uri.http("192.168.200.10:3001", "/filtro"));
+  getUsers(String page) async{
+    http.Response response = await http.get(Uri.http("192.168.200.10:3001", page));
     var data = json.decode(response.body);
     setState(() {
       postulantes = data;
     });
-    
+  }
+
+  getUsersFilter(String filtro) async {
+    http.Response response = await http.post(Uri.parse("http://192.168.200.10:3001/filtro?cargo="+filtro));
+    var data = json.decode(response.body);
+    setState(() {
+      postulantes = data;
+    });
+  }
+
+  getUsersPriori(String filtro) async {
+    http.Response response = await http.post(Uri.parse("http://192.168.200.10:3001/prioridad?cargo="+filtro));
+    var data = json.decode(response.body);
+    setState(() {
+      postulantes = data;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    getUsers();
+    getUsers("/filtro");
   }
 
   void _mostrarInformacion(postulante){
@@ -92,11 +106,12 @@ class _MyHomePageState extends State<MyHomePage> {
               Container(
                 padding: const EdgeInsets.only(bottom: 25.0),
                 width: 120,
-                height: 120,
+                height: 150,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black, style: BorderStyle.solid),
                   image: DecorationImage(
                     image: _convertirBlobAImagen(postulante["foto"]).image,
+                    fit: BoxFit.fill
                   ),
                 ),
               ),
@@ -309,49 +324,114 @@ class _MyHomePageState extends State<MyHomePage> {
           Column(
             children: <Widget>[
               Container(
+                padding: const EdgeInsets.only(top: 25.0),
                 child: DropdownButton<String>(
-                  iconEnabledColor: AppColors.mainColor,
-                  value: dropdownValue,
+                  iconEnabledColor: Colors.black,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 25,
+                  value: dropdownFiltro,
                   elevation: 16,
                   style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
-                  underline: Container(
-                    height: 2,
-                    color: AppColors.mainColor,
-                  ),
+                  focusColor: AppColors.mainColor,
                   onChanged: (String? filtro) {
                     setState(() {
-                      dropdownValue = filtro!;
+                      dropdownFiltro = filtro!;
+                      switch (filtro){
+                        case "ADMINISTRADOR(A) DE BASE DE DATOS":
+                          getUsersFilter("BD");
+                          break;
+                        case "CONTADOR(A)":
+                          getUsersFilter("CONT");
+                          break;
+                        case "DESARROLLADOR(A) WEB":
+                          getUsersFilter("DW");
+                          break;
+                        default:
+                          getUsersFilter("T");
+                          break;
+                      }
                     });
                   },
-                  items: <String>['Todos', 'ADMINISTRADOR(A) DE BASE DE DATOS', 'CONTADOR(A)', 'DESARROLLADOR(A) WEB']
+                  items: <String>['TODOS', 'ADMINISTRADOR(A) DE BASE DE DATOS', 'CONTADOR(A)', 'DESARROLLADOR(A) WEB']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value),
+                      child: Text(
+                        value,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     );
                   }).toList(),
+                  isExpanded: true,
                 ),
               ),
               Container(
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.only(left: 100, top: 20),
-                      child: IconButton(
-                        iconSize: 40,
-                        onPressed: () => {_mostrarAlerta("Priorizar Postulantes", "Este servicio orden según la prioridad escogida a los postulantes",context)},
-                        icon: Icon(
-                          Icons.assignment_late_sharp,
-                        ),
+                padding: const EdgeInsets.only(top: 25.0),
+                child: DropdownButton<String>(
+                  iconEnabledColor: Colors.black,
+                  icon: const Icon(Icons.arrow_downward),
+                  iconSize: 25,
+                  value: dropdownPriori,
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                  focusColor: AppColors.mainColor,
+                  onChanged: (String? filtro) {
+                    setState(() {
+                      dropdownPriori = filtro!;
+                      switch (filtro+"-"+dropdownFiltro){
+                        case "FECHA DE SOLICITUD-ADMINISTRADOR(A) DE BASE DE DATOS":
+                         getUsersPriori("BDP1");
+                          break;
+                        case "FECHA DE SOLICITUD-CONTADOR(A)":
+                         getUsersPriori("CONTP1");
+                          break;
+                        case "FECHA DE SOLICITUD-DESARROLLADOR(A) WEB":
+                         getUsersPriori("DWP1");
+                          break;
+                        case "FECHA DE SOLICITUD-TODOS":
+                         getUsersPriori("TP1");
+                          break;
+                        case "PROMEDIO ACTUAL DE UNIVERSIDAD-ADMINISTRADOR(A) DE BASE DE DATOS":
+                         getUsersPriori("BDP2");
+                          break;
+                        case "PROMEDIO ACTUAL DE UNIVERSIDAD-CONTADOR(A)":
+                         getUsersPriori("CONTP2");
+                          break;
+                        case "PROMEDIO ACTUAL DE UNIVERSIDAD-DESARROLLADOR(A) WEB":
+                         getUsersPriori("DWP2");
+                          break;
+                        case "PROMEDIO ACTUAL DE UNIVERSIDAD-TODOS":
+                         getUsersPriori("TP2");
+                          break;
+                        case "NINGUNO-ADMINISTRADOR(A) DE BASE DE DATOS":
+                         getUsersPriori("BDP");
+                          break;
+                        case "NINGUNO-CONTADOR(A)":
+                         getUsersPriori("CONTP");
+                          break;
+                        case "NINGUNO-DESARROLLADOR(A) WEB":
+                         getUsersPriori("DWP");
+                          break;
+                        case "NINGUNO-TODOS":
+                         getUsersPriori("N");
+                          break;
+                      }
+                    });
+                  },
+                  items: <String>['NINGUNO', 'FECHA DE SOLICITUD', 'PROMEDIO ACTUAL DE UNIVERSIDAD']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    );
+                  }).toList(),
+                  isExpanded: true,
                 ),
               ),
-              const SizedBox(height: 10,),
               const Divider(color: Colors.grey,),
-              const SizedBox(height: 10,),
               Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 20),
@@ -363,7 +443,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                 ),
               ),
-              const SizedBox(height: 10,),
               const Divider(color: Colors.grey,),
             ],
           ),
