@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Postulantes',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: AppColors.mainColor,
       ),
@@ -94,62 +95,95 @@ class _MyHomePageState extends State<MyHomePage> {
     getUsers("/filtro");
   }
 
-  void _mostrarInformacion(postulante){
-    showCupertinoDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text("Perfil de postulante"),
-        content: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.only(bottom: 25.0),
-                width: 120,
-                height: 150,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, style: BorderStyle.solid),
-                  image: DecorationImage(
-                    image: _convertirBlobAImagen(postulante["foto"]).image,
-                    fit: BoxFit.fill
+  void _mostrarInformacion(cedula) async{
+    http.Response response = await http.post(Uri.parse("http://192.168.200.10:3001/info?cargo="+cedula.toString()));
+    List postulante = json.decode(response.body);
+    if(!postulante.isEmpty){
+      showCupertinoDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text("Perfil de postulante"),
+          content: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.only(bottom: 25.0),
+                  width: 120,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, style: BorderStyle.solid),
+                    image: DecorationImage(
+                      image: _convertirBlobAImagen(postulante[0]["foto"]).image,
+                      fit: BoxFit.fill
+                    ),
                   ),
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _createTitle("Número de cédula:", 14, TextAlign.left),
-                  _createText("0"+postulante["cedula"].toString(), 14, TextAlign.left, FontStyle.normal),
-                  _createTitle("Nombre:", 14, TextAlign.left),
-                  _createText(postulante["nombre"], 14, TextAlign.left, FontStyle.normal),
-                  _createTitle("Apellido Paterno:", 14, TextAlign.left),
-                  _createText(postulante["apellido_paterno"], 14, TextAlign.left, FontStyle.normal),
-                  _createTitle("Apellido Materno:", 14, TextAlign.left),
-                  _createText(postulante["apellido_materno"], 14, TextAlign.left, FontStyle.normal),
-                  _createTitle("Puesto solicitado:", 14, TextAlign.left),
-                  _createText(postulante["cargo"], 14, TextAlign.left, FontStyle.normal),
-                ],
-              ),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text(
-              'Ok',
-              style: TextStyle(
-                color: AppColors.primaryColor,
-                fontSize: 20,
-              ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _createTitle("Número de cédula:", 14, TextAlign.left),
+                    _createText("0"+postulante[0]["cedula"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Nombre:", 14, TextAlign.left),
+                    _createText(postulante[0]["nombre"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Segundo Nombre:", 14, TextAlign.left),
+                    _createText(postulante[0]["segundo_nombre"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Apellido Paterno:", 14, TextAlign.left),
+                    _createText(postulante[0]["apellido_paterno"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Apellido Materno:", 14, TextAlign.left),
+                    _createText(postulante[0]["apellido_materno"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Sexo", 14, TextAlign.left),
+                    _createText(postulante[0]["sexo"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Fecha de Nacimiento", 14, TextAlign.left),
+                    _createText(getDateInfo(postulante[0]["fechaNacimiento"]), 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Dirección", 14, TextAlign.left),
+                    _createText(postulante[0]["direccion"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Teléfono", 14, TextAlign.left),
+                    _createText("0"+postulante[0]["telefono"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("País de Nacimiento", 14, TextAlign.left),
+                    _createText(postulante[0]["paisNacimiento"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Nacionalidad", 14, TextAlign.left),
+                    _createText(postulante[0]["nacionalidad"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Promedio", 14, TextAlign.left),
+                    _createText(postulante[0]["promedio"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Ingreso", 14, TextAlign.left),
+                    _createText(getDateInfo(postulante[0]["ingreso"]), 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Nombre de Instituto", 14, TextAlign.left),
+                    _createText(postulante[0]["nombre_i"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Dirección de Instituto", 14, TextAlign.left),
+                    _createText(postulante[0]["direccion_i"], 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Teléfono de Instituto", 14, TextAlign.left),
+                    _createText("0"+postulante[0]["telefono_i"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Expectativa", 14, TextAlign.left),
+                    _createText("0"+postulante[0]["expectativa"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createTitle("Último ingreso", 14, TextAlign.left),
+                    _createText("0"+postulante[0]["ultimo_ingreso"].toString(), 14, TextAlign.left, FontStyle.normal),
+                  ],
+                ),
+              ],
             ),
-            onPressed: () => Navigator.of(context).pop(),
           ),
-        ],
-      ),
-      barrierDismissible: true,
-    );
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Ok',
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                  fontSize: 20,
+                ),
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+        barrierDismissible: true,
+      );
+    }
   }
-
+  String getDateInfo(String fecha){
+    List<String> lfecha = fecha.split("T")[0].split("-");
+    return lfecha[2]+"-"+lfecha[1]+"-"+lfecha[0];
+  }
   Text _createText(String str, double size,TextAlign al, FontStyle fst){
     return Text(
       str,
@@ -299,7 +333,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Expanded(
                 child: IconButton(
-                  onPressed: () => _mostrarInformacion(postulantes[indice]),
+                  onPressed: () => _mostrarInformacion(postulantes[indice]["cedula"]),
                   icon: const Icon(Icons.arrow_forward_ios),
                 )
               ),

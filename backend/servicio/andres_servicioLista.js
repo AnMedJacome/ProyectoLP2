@@ -33,13 +33,35 @@ var query = "select cedula, nombre, apellido_paterno, apellido_materno, cargo, f
 var prioquery = "select nombre, apellido_materno, cargo, promedio, fecha, foto, cedula from ( "+
 "select u.promedio, post.fecha, post.puesto_id, c.cedula, p.nombre, p.apellido_paterno, p.apellido_materno, p.foto from curriculum c "+
 "inner join (postulacion post, universidad u, perfil p) "+
-"on (post.pasante=c.cedula and c.universidad_id=u.universidad_id and c.cedula=p.cedula) "+
+"on (post.pasante=c.cedula and p.cedula=u.cedula and c.cedula=p.cedula) "+
 ") pox "+
 "inner join puesto p on pox.puesto_id = p.puesto_id ";
+
+
 
 app.get('/', (req, res) =>{
     res.json("Pantalla principal -> Ingrese a uno de los links para poder ver: orden"+
     "por prioridad (localhost:3001/prioridad) o filtrar los postulantes (localhost:3001/filtro)");
+});
+
+app.get('/info', (req, res) =>{
+    var infqy = "select p.*, u.promedio, u.ingreso, i.nombre as nombre_i, i.direccion as direccion_i, i.telefono as telefono_i, c.expectativa, c.ultimo_ingreso from perfil p "+
+    "inner join (curriculum c, universidad u, institucion i) "+
+    "on (p.cedula = c.cedula and p.cedula = u.cedula and u.universidad_id = i.institucion_id) "+
+    "where p.cedula = " + req.query.cargo;
+    obtenerDatos(conexion, infqy, (resultado) => {
+        res.json(resultado);
+    });
+});
+
+app.post('/info', (req, res, next) =>{
+    var infqy = "select p.*, u.promedio, u.ingreso, i.nombre as nombre_i, i.direccion as direccion_i, i.telefono as telefono_i, c.expectativa, c.ultimo_ingreso from perfil p "+
+    "inner join (curriculum c, universidad u, institucion i) "+
+    "on (p.cedula = c.cedula and p.cedula = u.cedula and u.universidad_id = i.institucion_id) "+
+    "where p.cedula = " + req.query.cargo;
+    obtenerDatos(conexion, infqy, (resultado) => {
+        res.json(resultado);
+    });
 });
 
 app.get('/filtro', (req, res) =>{
