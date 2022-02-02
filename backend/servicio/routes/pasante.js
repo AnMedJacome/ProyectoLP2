@@ -18,6 +18,22 @@ router.get('/', function(req, res, next) {
    .catch(error => res.status(400).send(error))
 });
 
+models.pasante.belongsTo(models.perfil, {targetKey:'cedula',foreignKey: 'cedula'});
+/* GET pasantes listing. */
+router.get('/', function(req, res, next) {
+  /res.send('respond with a resource');/
+   models.pasante.findAll({
+	include: [{
+		model: models.perfil,
+		required: true
+	  }]
+   })
+   .then(pasante => {
+      res.send(pasante)
+   })
+   .catch(error => res.status(400).send(error))
+});
+
 router.post('/', function (req, res, next) {
 	let carrera = req.body.carrera;
 	let cedula = req.body.cedula;
@@ -37,6 +53,19 @@ router.post('/', function (req, res, next) {
    
 });
 
+router.put("/:cedula",function (req, res, next){
+	console.log(req.body);
+	console.log(req.params);
+	conexion.query(`UPDATE perfil SET ? WHERE ?`, [req.body,req.params], function(err, rows) {
+	  if(err) {
+		console.log(err.message);
+		// do some stuff here
+	  } else {
+		console.log(rows);
+		res.send("Actualizado")
+	  }
+	});
 
+})
 
 module.exports = router;

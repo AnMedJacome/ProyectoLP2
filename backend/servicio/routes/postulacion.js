@@ -29,5 +29,21 @@ router.get('/pasante/:pasante', (req, res) => {
 });
 
 
+router.post('/', function (req, res, next) {
+	let pasante = req.body.pasante;
+	let puesto_id = req.body.puesto_id;
+	let estado = 1;
+	let fecha = req.body.fecha;
+	models.postulacion.create({
+		pasante: pasante,
+		puesto_id: puesto_id,
+		estado: estado,
+		fecha: fecha
+	  })
+	  .then(postulacion => {
+		res.send(postulacion)
+	})
+	  .catch(error => res.status(400).send(error));
+});
 
 module.exports = router;

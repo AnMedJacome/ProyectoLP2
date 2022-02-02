@@ -25,6 +25,16 @@ router.get('/', function (req, res, next) {
 });
 
 
+router.get('/todos', async (req, res) =>{
+	conexion.query('SELECT * FROM puesto INNER JOIN empresa ON puesto.empresa=empresa.ruc',(errors,result)=>{
+		if(errors){
+			console.log(errors);
+			res.send(errors)
+		  }else{
+			res.send(result)
+		  }
+	})
+});
 
 router.post('/', function (req, res, next) {
 	let empresa = req.body.empresa;
