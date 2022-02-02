@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 // REEMPLAZAR COLORES
 class AppColors {
-  static final MaterialColor mainColor = const MaterialColor(
+  static MaterialColor mainColor = const MaterialColor(
     0xFFF3CC44,
-    const <int, Color>{
-      50: const Color(0xFFF3CC44),
-      100: const Color(0xFFF3CC44),
-      200: const Color(0xFFF3CC44),
-      300: const Color(0xFFF3CC44),
-      400: const Color(0xFFF3CC44),
-      500: const Color(0xFFF3CC44),
-      600: const Color(0xFFF3CC44),
-      700: const Color(0xFFF3CC44),
-      800: const Color(0xFFF3CC44),
-      900: const Color(0xFFF3CC44),
+     <int, Color>{
+      50: Color(0xFFF3CC44),
+      100: Color(0xFFF3CC44),
+      200: Color(0xFFF3CC44),
+      300: Color(0xFFF3CC44),
+      400: Color(0xFFF3CC44),
+      500: Color(0xFFF3CC44),
+      600: Color(0xFFF3CC44),
+      700: Color(0xFFF3CC44),
+      800: Color(0xFFF3CC44),
+      900: Color(0xFFF3CC44),
     },
   );
 
