@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
     carrera: {
       type: DataTypes.STRING(35),
       allowNull: true
-    },
+    },  
     estado: {
       type: DataTypes.SMALLINT,
       allowNull: true

@@ -3,6 +3,7 @@ var router = express.Router();
 const sequelize = require('../models/index.js').sequelize;
 var initModels = require("../models/init-models");
 var models = initModels(sequelize); 
+const conexion=require('../database/db')
 
 router.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
@@ -14,13 +15,15 @@ router.use((req, res, next) => {
 
 router.get('/', function (req, res, next) {
 	models.puesto.findAll({
-		attributes: {}
+
 	})
 		.then(puestos => {
 			res.send(puestos)
 		})
-		.catch(error => res.status(400).send(error))
+		.catch(error => {res.status(400).send(error)
+		console.log(error)})
 });
+
 
 
 router.post('/', function (req, res, next) {
@@ -65,5 +68,6 @@ router.get('/:puesto_id', function(req, res, next) {
 	  })
 	  .catch(error => res.status(400).send(error))
   });
+
 
 module.exports = router;
