@@ -18,7 +18,7 @@ const conexion = mysql.createPool({
 
 var empresa;
 
-app.listen(3001, () =>{
+app.listen(3002, () =>{
     console.log("CONEXIÓN ESTABLECIDA!!");
 });
 

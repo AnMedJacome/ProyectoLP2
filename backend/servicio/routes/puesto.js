@@ -49,7 +49,6 @@ router.post('/', function (req, res, next) {
     let area_de_trabajo = req.body.area_de_trabajo;
 	models.puesto.create({
 		empresa: empresa,
-		puesto_id: puesto_id,
 		cargo: cargo,
 		p_descripcion: p_descripcion,
 		modalidad: modalidad,
@@ -60,7 +59,7 @@ router.post('/', function (req, res, next) {
 		area_de_trabajo: area_de_trabajo
 	  })
 	  .then(puesto => {
-		res.send(puesto)
+		res.send("creado")
 	})
 	  .catch(error => res.status(400).send(error));
 });

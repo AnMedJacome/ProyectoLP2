@@ -3,6 +3,7 @@ import 'package:passantic/constants/colors.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'package:passantic/utils/globals.dart' as globals;
 
 class LoginBottomSheet extends StatefulWidget {
   @override
@@ -18,9 +19,16 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
           Uri.parse('http://localhost:3001/users/auth'),
           body: {"usuario": usuario, "clave": clave});
       debugPrint(response.body);
-      if (response.body == "LOGIN") {
+      if (response.body == "Pasante") {
+        globals.isLoggedIn = true;
+        globals.usuario = usuario;
+        Navigator.of(context).pushReplacementNamed("/homePasante");
+      } else if (response.body == "Empresa") {
+        globals.isLoggedIn = true;
+        globals.usuario = usuario;
         Navigator.of(context).pushReplacementNamed("/home");
-      } else {
+      } 
+      else {
         showDialog<String>(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -34,7 +42,7 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
             ],
           ),
         );
-       /* ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        /* ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content:
                 Text('NO EXISTE EL USUARIO', textAlign: TextAlign.center)));*/
       }

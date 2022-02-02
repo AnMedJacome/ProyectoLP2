@@ -10,9 +10,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:core';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
+class ServicioAndres extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -66,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List postulantes = [];
 
   getUsers(String page) async{
-    http.Response response = await http.get(Uri.http("192.168.200.10:3001", page));
+    http.Response response = await http.get(Uri.http("localhost:3002", page));
     var data = json.decode(response.body);
     setState(() {
       postulantes = data;
@@ -74,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   getUsersFilter(String filtro) async {
-    http.Response response = await http.post(Uri.parse("http://192.168.200.10:3001/filtro?cargo="+filtro));
+    http.Response response = await http.post(Uri.parse("http://localhost:3002/filtro?cargo="+filtro));
     var data = json.decode(response.body);
     setState(() {
       postulantes = data;
@@ -82,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   getUsersPriori(String filtro) async {
-    http.Response response = await http.post(Uri.parse("http://192.168.200.10:3001/prioridad?cargo="+filtro));
+    http.Response response = await http.post(Uri.parse("http://localhost:3002/prioridad?cargo="+filtro));
     var data = json.decode(response.body);
     setState(() {
       postulantes = data;
@@ -96,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _mostrarInformacion(cedula) async{
-    http.Response response = await http.post(Uri.parse("http://192.168.200.10:3001/info?cargo="+cedula.toString()));
+    http.Response response = await http.post(Uri.parse("http://localhost:3002/info?cargo="+cedula.toString()));
     List postulante = json.decode(response.body);
     if(!postulante.isEmpty){
       showCupertinoDialog(

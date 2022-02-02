@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeView extends StatefulWidget {
-  _HomeView createState() => _HomeView();
+class HomeEmpresa extends StatefulWidget {
+  _HomeEmpresa createState() => _HomeEmpresa();
 }
 
-class _HomeView extends State<HomeView> {
+class _HomeEmpresa extends State<HomeEmpresa> {
   @override
   void initState() {
     super.initState();
@@ -208,7 +208,7 @@ class _HomeView extends State<HomeView> {
                         content: Text('Cambiando de pasante...')));
                   })
             ],
-          ),
+          )
         ));
   }
 }
