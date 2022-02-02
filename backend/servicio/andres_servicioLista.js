@@ -41,7 +41,7 @@ var query = "select cedula, nombre, apellido_paterno, apellido_materno, cargo, f
 var prioquery = "select nombre, apellido_materno, cargo, promedio, fecha, foto, cedula from ( "+
 "select u.promedio, post.fecha, post.puesto_id, c.cedula, p.nombre, p.apellido_paterno, "+
 "p.apellido_materno, p.foto from curriculum c "+
-"inner join (postulacion post, universidad u, perfil p, puesto pues) "+
+"inner join (postulacion post, universidad u, perfil p, pasante pas, puesto pues) "+
 "on (post.pasante=c.cedula and c.cedula=u.cedula and c.cedula=p.cedula "+
 "and p.cedula = pas.cedula and post.puesto_id=pues.puesto_id) "+
 "where post.estado != 2 and pas.estado != 2 and pues.vacantes > 0 "+
