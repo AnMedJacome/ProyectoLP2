@@ -7,12 +7,18 @@ const mysql = require('mysql2');
 const {obtenerDatos} = require('./funciones_andres');
 
 app.use(express.json());
-
+app.use((req, res, next) => {
+	res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
+	res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+	res.header('Allow', 'GET, POST, OPTIONS');
+	next();
+});
 // .env con información para acceder a la base de datos
 const conexion = mysql.createPool({
     host: process.env.HOST,
     user: process.env.USER,
-    password: null,
+    password: process.env.PASSWORD,
     database: process.env.DATABASE,
 });
 
