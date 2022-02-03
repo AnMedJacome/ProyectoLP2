@@ -49,9 +49,25 @@ router.post('/', function (req, res, next) {
 		res.send("Creado")
 	})
 	  .catch(error => {res.status(400).send(error)
-    console.log(error )});
-   
+    console.log(error )}); 
 });
+
+/* GET ordenes listing. */
+router.get('/:usuario', function(req, res, next) {
+	models.pasante.findAll({
+			include: [{
+			model: models.perfil,
+			required: true
+		  }],
+		  where: {
+			usuario: req.params.usuario
+		  }
+	  })
+	  .then(pasante => {
+		  res.json(pasante)
+	  })
+	  .catch(error => res.status(400).send(error))
+  });
 
 router.put("/:cedula",function (req, res, next){
 	console.log(req.body);

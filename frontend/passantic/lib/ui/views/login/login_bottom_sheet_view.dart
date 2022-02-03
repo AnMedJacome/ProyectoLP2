@@ -33,7 +33,7 @@ class _LoginBottomSheet extends State<LoginBottomSheet> {
           context: context,
           builder: (BuildContext context) => AlertDialog(
             title: const Text('ALERTA'),
-            content: const Text('NO EXISTE EL USUARIO'),
+            content: const Text('Usuario o contraseña incorrecto'),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context, 'OK'),

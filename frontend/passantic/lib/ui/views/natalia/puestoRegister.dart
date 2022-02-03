@@ -23,7 +23,7 @@ class _RegisterPuestoview extends State<RegisterPuestoview> {
   final TextEditingController _controllerSalario = TextEditingController();
   final TextEditingController _controllerArea = TextEditingController();
   int _currentStep = 0;
-  List empresa=[];
+  List empresa = [];
   @override
   void initState() {
     getEmpresa();
@@ -37,7 +37,6 @@ class _RegisterPuestoview extends State<RegisterPuestoview> {
       setState(() {
         empresa = json.decode(response.body);
       });
-      debugPrint(empresa[0]["ruc"]);
     } catch (e) {}
   }
 
@@ -46,15 +45,14 @@ class _RegisterPuestoview extends State<RegisterPuestoview> {
       http.Response response =
           await http.post(Uri.parse('http://localhost:3001/puestos'), body: {
         "cargo": _controllerCargo.text,
-        "empresa":empresa[0]["ruc"],
-        "p_descripcion": _controllerCargo.text,
-        "modalidad": _controllerDescripcion.text,
-        "conocimiento_requerido": _controllerCargo.text,
-        "formacion_requerida": _controllerDescripcion.text,
-        "vacantes": _controllerCargo.text,
-        "clave": _controllerDescripcion.text,
-        "salario": _controllerCargo.text,
-        "area_de_trabajo": _controllerDescripcion.text,
+        "empresa": empresa[0]["ruc"].toString(),
+        "p_descripcion": _controllerDescripcion.text,
+        "modalidad": _controllerModalidad.text,
+        "conocimiento_requerido": _controllerConocimientos.text,
+        "formacion_requerida": _controllerFormacion.text,
+        "vacantes": _controllerVacantes.text,
+        "salario": _controllerSalario.text,
+        "area_de_trabajo": _controllerArea.text,
       });
       if (response.body == "creado") {
         showDialog<String>(
@@ -65,7 +63,7 @@ class _RegisterPuestoview extends State<RegisterPuestoview> {
             actions: <Widget>[
               TextButton(
                 onPressed: () =>
-                    Navigator.of(context).pushReplacementNamed("/home"),
+                    Navigator.of(context).pushReplacementNamed("/login"),
                 child: const Text('OK'),
               ),
             ],
@@ -86,7 +84,9 @@ class _RegisterPuestoview extends State<RegisterPuestoview> {
           ),
         );
       }
-    } catch (e) {}
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   @override
@@ -94,6 +94,12 @@ class _RegisterPuestoview extends State<RegisterPuestoview> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.background,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.logout),
+        ),
         elevation: 0,
         title: Text(
           "Crear un nuevo puesto",

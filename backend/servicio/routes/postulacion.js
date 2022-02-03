@@ -22,10 +22,15 @@ router.get('/', function(req, res, next) {
 
 
 
-router.get('/pasante/:pasante', (req, res) => {
-    
-  //req.params; // { userId: '42' }
-  res.json(req.params);
+router.get('/:pasante', (req, res) => {
+	conexion.query('SELECT * FROM postulacion INNER JOIN puesto ON postulacion.puesto_id=puesto.puesto_id WHERE pasante=?',[req.params.pasante],(errors,result)=>{
+		if(errors){
+			console.log(errors);
+			res.send(errors)
+		  }else{
+			res.send(result)
+		  }
+	}) 
 });
 
 
@@ -46,4 +51,27 @@ router.post('/', function (req, res, next) {
 	  .catch(error => res.status(400).send(error));
 });
 
+router.put("/aceptar/:id",function (req, res, next){
+	conexion.query(`UPDATE postulacion SET estado=2 WHERE id=?`, [req.params.id], function(err, rows) {
+	  if(err) {
+		console.log(err.message);
+		// do some stuff here
+	  } else {
+		console.log(rows);
+		res.send("Aceptado")
+	  }
+	});
+})
+
+router.put("/negar/:id",function (req, res, next){
+	conexion.query(`UPDATE postulacion SET estado=0 WHERE id=?`, [req.params.id], function(err, rows) {
+	  if(err) {
+		console.log(err.message);
+		// do some stuff here
+	  } else {
+		console.log(rows);
+		res.send("Negado")
+	  }
+	});
+})
 module.exports = router;

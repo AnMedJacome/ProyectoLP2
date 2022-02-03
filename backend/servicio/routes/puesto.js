@@ -47,6 +47,7 @@ router.post('/', function (req, res, next) {
     let vacantes = req.body.vacantes;
     let salario = req.body.salario;
     let area_de_trabajo = req.body.area_de_trabajo;
+	console.log(req.body.empresa)
 	models.puesto.create({
 		empresa: empresa,
 		cargo: cargo,
@@ -59,9 +60,10 @@ router.post('/', function (req, res, next) {
 		area_de_trabajo: area_de_trabajo
 	  })
 	  .then(puesto => {
+
 		res.send("creado")
 	})
-	  .catch(error => res.status(400).send(error));
+	  .catch(error => {res.status(400).send(error);console.log(error)});
 });
 
 /* GET ordenes listing. */
@@ -78,5 +80,16 @@ router.get('/:puesto_id', function(req, res, next) {
 	  .catch(error => res.status(400).send(error))
   });
 
+  router.put("/aceptar/:puesto_id",function (req, res, next){
+	conexion.query(`UPDATE puesto SET vacantes=vacantes-1 WHERE puesto_id=?`, [req.params.puesto_id], function(err, rows) {
+	  if(err) {
+		console.log(err.message);
+		// do some stuff here
+	  } else {
+		console.log(rows);
+		res.send("Aceptado")
+	  }
+	});
+})
 
 module.exports = router;

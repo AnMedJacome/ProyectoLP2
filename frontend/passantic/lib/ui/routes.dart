@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:passantic/models/postulacion.dart';
 import 'package:passantic/ui/views/alejandra/opcionesPosulacion.dart';
 import 'package:passantic/ui/views/andres/serviciosLista.dart';
 import 'package:passantic/ui/views/login/login.dart';
+import 'package:passantic/ui/views/natalia/homeEmpresa.dart';
 import 'package:passantic/ui/views/natalia/homeEmpresaView.dart';
 import 'package:passantic/ui/views/natalia/homePasanteView.dart';
 import 'package:passantic/ui/views/natalia/puestoRegister.dart';
@@ -27,12 +29,11 @@ class Routes {
         return MaterialPageRoute(builder: (_) => HomeView());
       case '/homePasante':
         return MaterialPageRoute(builder: (_) => HomePasanteView());
-      case '/registerPuesto':
-        return MaterialPageRoute(builder: (_) => RegisterPuestoview());
-      case '/filtro':
-        return MaterialPageRoute(builder: (_) => ServicioAndres());
       case '/datosPasante':
         return MaterialPageRoute(builder: (_) => datosPasante());
+      case '/pasante-view':
+        Postulacion _postulacion = args as Postulacion;
+        return MaterialPageRoute(builder: (_) => HomeEmpresa(_postulacion));
       case '/postulaciones':
         return MaterialPageRoute(builder: (_) => OpcionesPostulacion());
       default:

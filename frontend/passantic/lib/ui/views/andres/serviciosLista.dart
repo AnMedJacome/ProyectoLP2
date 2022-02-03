@@ -6,6 +6,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:passantic/constants/colors.dart';
+import 'package:passantic/models/pasante.dart';
+import 'package:passantic/models/postulacion.dart';
+import 'package:passantic/models/puesto.dart';
 import 'package:passantic/utils/globals.dart' as globals;
 import 'package:http/http.dart' as http;
 import 'package:passantic/ui/views/natalia/homeEmpresaView.dart';
@@ -13,62 +16,31 @@ import 'package:passantic/ui/views/natalia/homePasanteView.dart';
 import 'dart:convert';
 import 'dart:core';
 
-class ServicioAndres extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Postulantes',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: AppColors.mainColor,
-      ),
-      home: MyHomePage(title: 'Postulaciones'),
-    );
-  }
-}
-
-  void _mostrarAlerta(titulo, contenido, BuildContext context){
-    showCupertinoDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(titulo),
-        content: Text(contenido),
-        actions: <Widget>[
-          TextButton(
-            child: const Text(
-              'Ok',
-              style: TextStyle(
-                color: Colors.blue,
-              ),
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-      barrierDismissible: true,
-    );
-  }
-
-class MyHomePage extends StatefulWidget {
-  final String title;
-
-  MyHomePage({
-    Key? key,
-    required this.title,
-  }) : super(key: key);
+class ServicioAndres extends StatefulWidget {
+  const ServicioAndres({Key? key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _ServicioAndres createState() => _ServicioAndres();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ServicioAndres extends State<ServicioAndres> {
+  @override
+  void initState() {
+    getUsersFilter("T");
+    super.initState();
+  }
+
   String _dropdownFiltro = 'TODOS';
   String _dropdownPriori = 'NINGUNO';
   int _index = 0;
   List postulantes = [];
 
   getUsersFilter(String filtro) async {
-    http.Response response = await http.post(Uri.parse("http://localhost:3002/filtro?cargo="+filtro+"&id="+globals.usuario));
+    http.Response response = await http.post(Uri.parse(
+        "http://localhost:3002/filtro?cargo=" +
+            filtro +
+            "&id=" +
+            globals.usuario));
     debugPrint(globals.usuario);
     var data = json.decode(response.body);
     setState(() {
@@ -77,23 +49,40 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   getUsersPriori(String filtro) async {
-    http.Response response = await http.post(Uri.parse("http://localhost:3002/prioridad?cargo="+filtro+"&id="+globals.usuario));
+    http.Response response = await http.post(Uri.parse(
+        "http://localhost:3002/prioridad?cargo=" +
+            filtro +
+            "&id=" +
+            globals.usuario));
     var data = json.decode(response.body);
     setState(() {
       postulantes = data;
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getUsersFilter("T");
-  }
-
-  void _mostrarInformacion(cedula) async{
-    http.Response response = await http.post(Uri.parse("http://localhost:3002/info?cargo="+cedula.toString()));
+  void _mostrarInformacion(cedula) async {
+    http.Response response = await http.post(
+        Uri.parse("http://localhost:3002/info?cargo=" + cedula.toString()));
     List postulante = json.decode(response.body);
-    if(!postulante.isEmpty){
+    if (postulante.isNotEmpty) {
+      http.Response postulacion = await http.get(
+          Uri.parse("http://localhost:3001/postulacion/" + cedula.toString()));
+      List<dynamic> puestoo = jsonDecode(postulacion.body);
+      Pasante pasante = new Pasante(
+          postulante[0]["nombre"].toString(),
+          postulante[0]["segundo_nombre"].toString(),
+          postulante[0]["foto"],
+          postulante[0]["apellido_materno"].toString(),
+          postulante[0]["apellido_paterno"].toString(),
+          int.parse(postulante[0]["cedula"].toString()));
+      Postulacion postulacion2 = new Postulacion(
+          int.parse(puestoo[0]["id"].toString()),
+          puestoo[0]["cargo"].toString(),
+          pasante,
+          int.parse(puestoo[0]["estado"].toString()),
+          puestoo[0]["fecha"].toString(),
+          int.parse(puestoo[0]["puesto_id"].toString()));
+
       showCupertinoDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -107,52 +96,74 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: 120,
                   height: 150,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, style: BorderStyle.solid),
+                    border: Border.all(
+                        color: Colors.black, style: BorderStyle.solid),
                     image: DecorationImage(
-                      image: _convertirBlobAImagen(postulante[0]["foto"]).image,
-                      fit: BoxFit.fill
-                    ),
+                        image:
+                            _convertirBlobAImagen(postulante[0]["foto"]).image,
+                        fit: BoxFit.fill),
                   ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     _createTitle("Número de cédula:", 14, TextAlign.left),
-                    _createText("0"+postulante[0]["cedula"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createText("0" + postulante[0]["cedula"].toString(), 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("Nombre:", 14, TextAlign.left),
-                    _createText(postulante[0]["nombre"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["nombre"], 14, TextAlign.left,
+                        FontStyle.normal),
                     _createTitle("Segundo Nombre:", 14, TextAlign.left),
-                    _createText(postulante[0]["segundo_nombre"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["segundo_nombre"], 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("Apellido Paterno:", 14, TextAlign.left),
-                    _createText(postulante[0]["apellido_paterno"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["apellido_paterno"], 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("Apellido Materno:", 14, TextAlign.left),
-                    _createText(postulante[0]["apellido_materno"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["apellido_materno"], 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("Sexo", 14, TextAlign.left),
-                    _createText(postulante[0]["sexo"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["sexo"], 14, TextAlign.left,
+                        FontStyle.normal),
                     _createTitle("Fecha de Nacimiento", 14, TextAlign.left),
-                    _createText(getDateInfo(postulante[0]["fechaNacimiento"]), 14, TextAlign.left, FontStyle.normal),
+                    _createText(getDateInfo(postulante[0]["fechaNacimiento"]),
+                        14, TextAlign.left, FontStyle.normal),
                     _createTitle("Dirección", 14, TextAlign.left),
-                    _createText(postulante[0]["direccion"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["direccion"], 14, TextAlign.left,
+                        FontStyle.normal),
                     _createTitle("Teléfono", 14, TextAlign.left),
-                    _createText("0"+postulante[0]["telefono"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createText("0" + postulante[0]["telefono"].toString(), 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("País de Nacimiento", 14, TextAlign.left),
-                    _createText(postulante[0]["paisNacimiento"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["paisNacimiento"], 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("Nacionalidad", 14, TextAlign.left),
-                    _createText(postulante[0]["nacionalidad"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["nacionalidad"], 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("Promedio", 14, TextAlign.left),
-                    _createText(postulante[0]["promedio"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["promedio"].toString(), 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("Ingreso", 14, TextAlign.left),
-                    _createText(getDateInfo(postulante[0]["ingreso"]), 14, TextAlign.left, FontStyle.normal),
+                    _createText(getDateInfo(postulante[0]["ingreso"]), 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("Nombre de Instituto", 14, TextAlign.left),
-                    _createText(postulante[0]["nombre_i"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["nombre_i"], 14, TextAlign.left,
+                        FontStyle.normal),
                     _createTitle("Dirección de Instituto", 14, TextAlign.left),
-                    _createText(postulante[0]["direccion_i"], 14, TextAlign.left, FontStyle.normal),
+                    _createText(postulante[0]["direccion_i"], 14,
+                        TextAlign.left, FontStyle.normal),
                     _createTitle("Teléfono de Instituto", 14, TextAlign.left),
-                    _createText("0"+postulante[0]["telefono_i"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createText("0" + postulante[0]["telefono_i"].toString(),
+                        14, TextAlign.left, FontStyle.normal),
                     _createTitle("Expectativa", 14, TextAlign.left),
-                    _createText("0"+postulante[0]["expectativa"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createText("0" + postulante[0]["expectativa"].toString(),
+                        14, TextAlign.left, FontStyle.normal),
                     _createTitle("Último ingreso", 14, TextAlign.left),
-                    _createText("0"+postulante[0]["ultimo_ingreso"].toString(), 14, TextAlign.left, FontStyle.normal),
+                    _createText(
+                        "0" + postulante[0]["ultimo_ingreso"].toString(),
+                        14,
+                        TextAlign.left,
+                        FontStyle.normal),
                   ],
                 ),
               ],
@@ -167,7 +178,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   fontSize: 20,
                 ),
               ),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => {
+                Navigator.of(context)
+                    .pushNamed("/pasante-view", arguments: postulacion2)
+              },
             ),
           ],
         ),
@@ -175,13 +189,13 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
   }
-  
-  String getDateInfo(String fecha){
+
+  String getDateInfo(String fecha) {
     List<String> lfecha = fecha.split("T")[0].split("-");
-    return lfecha[2]+"-"+lfecha[1]+"-"+lfecha[0];
+    return lfecha[2] + "-" + lfecha[1] + "-" + lfecha[0];
   }
-  
-  Text _createText(String str, double size,TextAlign al, FontStyle fst){
+
+  Text _createText(String str, double size, TextAlign al, FontStyle fst) {
     return Text(
       str,
       style: TextStyle(
@@ -192,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Text _createTitle(String str, double size,TextAlign al){
+  Text _createTitle(String str, double size, TextAlign al) {
     return Text(
       str,
       style: TextStyle(
@@ -203,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Image _convertirBlobAImagen(var blob){
+  Image _convertirBlobAImagen(var blob) {
     List<int> pic = blob["data"].cast<int>();
     Uint8List picBytes = Uint8List.fromList(pic);
     String picBase64 = new String.fromCharCodes(picBytes);
@@ -214,12 +228,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  String getDate(int indice){
+  String getDate(int indice) {
     List<String> fecha = postulantes[indice]["fecha"].split("T")[0].split("-");
-    return fecha[2]+"-"+fecha[1]+"-"+fecha[0];
+    return fecha[2] + "-" + fecha[1] + "-" + fecha[0];
   }
 
-  ListView _mostrarLista(){
+  ListView _mostrarLista() {
     return ListView.builder(
       itemCount: postulantes.length,
       itemBuilder: (BuildContext context, int indice) {
@@ -237,7 +251,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     shape: BoxShape.circle,
                     color: Colors.white,
                     image: DecorationImage(
-                      image: _convertirBlobAImagen(postulantes[indice]["foto"]).image,
+                      image: _convertirBlobAImagen(postulantes[indice]["foto"])
+                          .image,
                     ),
                   ),
                 ),
@@ -332,11 +347,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               Expanded(
-                child: IconButton(
-                  onPressed: () => _mostrarInformacion(postulantes[indice]["cedula"]),
-                  icon: const Icon(Icons.arrow_forward_ios),
-                )
-              ),
+                  child: IconButton(
+                onPressed: () =>
+                    _mostrarInformacion(postulantes[indice]["cedula"]),
+                icon: const Icon(Icons.arrow_forward_ios),
+              )),
             ],
           ),
         );
@@ -348,13 +363,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        automaticallyImplyLeading: true,
+        title: Text("Postulantes"),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back,color: Colors.black87,),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.of(context).pushReplacementNamed("/login");
           },
+          icon: Icon(Icons.logout),
         ),
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -371,7 +385,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   iconSize: 25,
                   value: _dropdownFiltro,
                   elevation: 16,
-                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                   focusColor: AppColors.mainColor,
                   underline: Container(
                     height: 2,
@@ -380,7 +397,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onChanged: (String? filtro) {
                     setState(() {
                       _dropdownFiltro = filtro!;
-                      switch (filtro){
+                      switch (filtro) {
                         case "ADMINISTRADOR(A) DE BASE DE DATOS":
                           getUsersFilter("BD");
                           break;
@@ -396,8 +413,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     });
                   },
-                  items: <String>['TODOS', 'ADMINISTRADOR(A) DE BASE DE DATOS', 'CONTADOR(A)', 'DESARROLLADOR(A) WEB']
-                      .map<DropdownMenuItem<String>>((String value) {
+                  items: <String>[
+                    'TODOS',
+                    'ADMINISTRADOR(A) DE BASE DE DATOS',
+                    'CONTADOR(A)',
+                    'DESARROLLADOR(A) WEB'
+                  ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(
@@ -417,7 +438,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   iconSize: 25,
                   value: _dropdownPriori,
                   elevation: 16,
-                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                   focusColor: AppColors.mainColor,
                   underline: Container(
                     height: 2,
@@ -426,48 +450,51 @@ class _MyHomePageState extends State<MyHomePage> {
                   onChanged: (String? filtro) {
                     setState(() {
                       _dropdownPriori = filtro!;
-                      switch (filtro+"-"+_dropdownFiltro){
+                      switch (filtro + "-" + _dropdownFiltro) {
                         case "FECHA DE SOLICITUD-ADMINISTRADOR(A) DE BASE DE DATOS":
-                         getUsersPriori("BDP1");
+                          getUsersPriori("BDP1");
                           break;
                         case "FECHA DE SOLICITUD-CONTADOR(A)":
-                         getUsersPriori("CONTP1");
+                          getUsersPriori("CONTP1");
                           break;
                         case "FECHA DE SOLICITUD-DESARROLLADOR(A) WEB":
-                         getUsersPriori("DWP1");
+                          getUsersPriori("DWP1");
                           break;
                         case "FECHA DE SOLICITUD-TODOS":
-                         getUsersPriori("TP1");
+                          getUsersPriori("TP1");
                           break;
                         case "PROMEDIO ACTUAL DE UNIVERSIDAD-ADMINISTRADOR(A) DE BASE DE DATOS":
-                         getUsersPriori("BDP2");
+                          getUsersPriori("BDP2");
                           break;
                         case "PROMEDIO ACTUAL DE UNIVERSIDAD-CONTADOR(A)":
-                         getUsersPriori("CONTP2");
+                          getUsersPriori("CONTP2");
                           break;
                         case "PROMEDIO ACTUAL DE UNIVERSIDAD-DESARROLLADOR(A) WEB":
-                         getUsersPriori("DWP2");
+                          getUsersPriori("DWP2");
                           break;
                         case "PROMEDIO ACTUAL DE UNIVERSIDAD-TODOS":
-                         getUsersPriori("TP2");
+                          getUsersPriori("TP2");
                           break;
                         case "NINGUNO-ADMINISTRADOR(A) DE BASE DE DATOS":
-                         getUsersPriori("BDP");
+                          getUsersPriori("BDP");
                           break;
                         case "NINGUNO-CONTADOR(A)":
-                         getUsersPriori("CONTP");
+                          getUsersPriori("CONTP");
                           break;
                         case "NINGUNO-DESARROLLADOR(A) WEB":
-                         getUsersPriori("DWP");
+                          getUsersPriori("DWP");
                           break;
                         case "NINGUNO-TODOS":
-                         getUsersPriori("N");
+                          getUsersPriori("N");
                           break;
                       }
                     });
                   },
-                  items: <String>['NINGUNO', 'FECHA DE SOLICITUD', 'PROMEDIO ACTUAL DE UNIVERSIDAD']
-                      .map<DropdownMenuItem<String>>((String value) {
+                  items: <String>[
+                    'NINGUNO',
+                    'FECHA DE SOLICITUD',
+                    'PROMEDIO ACTUAL DE UNIVERSIDAD'
+                  ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(
@@ -479,19 +506,23 @@ class _MyHomePageState extends State<MyHomePage> {
                   isExpanded: true,
                 ),
               ),
-              const Divider(color: Colors.black,),
+              const Divider(
+                color: Colors.black,
+              ),
               Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 20),
                 child: Text(
-                    "Postulantes",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  "Postulantes",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-              const Divider(color: Colors.black,),
+              const Divider(
+                color: Colors.black,
+              ),
             ],
           ),
           Expanded(
@@ -501,4 +532,26 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+void _mostrarAlerta(titulo, contenido, BuildContext context) {
+  showCupertinoDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: Text(titulo),
+      content: Text(contenido),
+      actions: <Widget>[
+        TextButton(
+          child: const Text(
+            'Ok',
+            style: TextStyle(
+              color: Colors.blue,
+            ),
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ],
+    ),
+    barrierDismissible: true,
+  );
 }

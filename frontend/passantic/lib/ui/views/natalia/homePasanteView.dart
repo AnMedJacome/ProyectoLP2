@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:passantic/ui/views/natalia/empresaMenu.dart';
 import 'package:passantic/ui/views/natalia/pasanteMenu.dart';
+
 
 class HomePasanteView extends StatefulWidget {
   _HomePasanteView createState() => _HomePasanteView();
@@ -22,7 +22,7 @@ class _HomePasanteView extends State<HomePasanteView> {
       bottomNavigationBar: _bottomBar(),
       body: PageView(
         controller: _pageController,
-        children: [MenuPasante(), Text("Opcion aun no implementada"), Text("Opcion aun no implementada")],
+         children: [MenuPasante(), Text("Hola"), Text("Adios")],
         onPageChanged: (int index) {
           setState(() {
             _currentPage = index;
