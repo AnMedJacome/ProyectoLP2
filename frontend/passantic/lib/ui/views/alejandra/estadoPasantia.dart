@@ -2,39 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:passantic/constants/colors.dart';
-
-void main() => runApp(MyApp());
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Postulaciones realizadas',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: AppColors.mainColor,
-      ),
-      home: const MyHomePage(title: 'Postulacion'),
-    );
-  }
-}
-class ObservarPostulacion extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Postulaciones realizadas',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: AppColors.mainColor,
-      ),
-      home: const MyHomePage(title: 'Postulacion'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
+class ObservarPostulacion extends StatefulWidget {
   final String title;
 
-  const MyHomePage({
+  const ObservarPostulacion({
     Key? key,
     required this.title,
   }) : super(key: key);
@@ -43,7 +14,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<ObservarPostulacion> {
   String dropdownValue = 'Todos';
   late _GridView gv;
 
@@ -65,6 +36,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed("/login");
+          },
+          icon: Icon(Icons.logout),
+        ),
         actions: const <Widget>[
           IconButton(onPressed: null, icon: Icon(Icons.help, size: 25,color: Colors.black45,),)
         ],
@@ -116,22 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Expanded(
             child: gv.build(),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Inicio",
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.chat),
-              label: "Mensajería"
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Perfil",
           ),
         ],
       ),

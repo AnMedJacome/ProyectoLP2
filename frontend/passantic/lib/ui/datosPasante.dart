@@ -1,34 +1,26 @@
 import 'package:flutter/material.dart';
-class datosPasante extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        //brightness: Brightness.dark,
-      ),
-      home: const MyHomePage(title: 'Principal'),
-    );
-  }
-}
-class MyHomePage extends StatefulWidget {
+class datosPasante extends StatefulWidget {
   final String title;
-  const MyHomePage({
+  const datosPasante({
     Key? key,
     required this.title,
   }) : super(key: key);
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<datosPasante> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(children:[const Icon(Icons.arrow_back_ios), const Text("Datos previos")]),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed("/login");
+          },
+          icon: Icon(Icons.logout),
+        ),
+        title: Row(children:[const Text("Datos previos")]),
       ),
       body: Center(
         child: Column(
@@ -70,23 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message_outlined),
-            label: 'Mensajes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_rounded),
-            label: 'Perfil',
-          ),
-        ],
-        selectedItemColor: Colors.amber[800],
-      ),
+
     );
   }
 }

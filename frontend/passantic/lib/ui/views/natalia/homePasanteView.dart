@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:passantic/ui/datosPasante.dart';
+import 'package:passantic/ui/views/alejandra/estadoPasantia.dart';
+import 'package:passantic/ui/views/alejandra/opcionesPosulacion.dart';
 import 'package:passantic/ui/views/natalia/pasanteMenu.dart';
 
 
@@ -22,7 +25,7 @@ class _HomePasanteView extends State<HomePasanteView> {
       bottomNavigationBar: _bottomBar(),
       body: PageView(
         controller: _pageController,
-         children: [MenuPasante(), Text("Hola"), Text("Adios")],
+         children: [OpcionesPostulacion(title: 'Postulaciones',), ObservarPostulacion( title: 'Revisar postulaciones',),datosPasante(title: 'Perfil del pasante',)],
         onPageChanged: (int index) {
           setState(() {
             _currentPage = index;
@@ -41,7 +44,7 @@ class _HomePasanteView extends State<HomePasanteView> {
         ),
         BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Mensajería"),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
+          icon: Icon(Icons.person_pin_circle),
           label: "Perfil",
         ),
       ],
