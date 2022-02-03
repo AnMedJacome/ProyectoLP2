@@ -8,11 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:passantic/constants/colors.dart';
 import 'package:passantic/models/pasante.dart';
 import 'package:passantic/models/postulacion.dart';
-import 'package:passantic/models/puesto.dart';
 import 'package:passantic/utils/globals.dart' as globals;
 import 'package:http/http.dart' as http;
-import 'package:passantic/ui/views/natalia/homeEmpresaView.dart';
-import 'package:passantic/ui/views/natalia/homePasanteView.dart';
 import 'dart:convert';
 import 'dart:core';
 
@@ -100,7 +97,7 @@ class _ServicioAndres extends State<ServicioAndres> {
                         color: Colors.black, style: BorderStyle.solid),
                     image: DecorationImage(
                         image:
-                            _convertirBlobAImagen(postulante[0]["foto"]).image,
+                            _convertirBlobAImagen(pasante.foto).image,
                         fit: BoxFit.fill),
                   ),
                 ),
@@ -108,19 +105,19 @@ class _ServicioAndres extends State<ServicioAndres> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     _createTitle("Número de cédula:", 14, TextAlign.left),
-                    _createText("0" + postulante[0]["cedula"].toString(), 14,
+                    _createText("0" + pasante.cedula.toString(), 14,
                         TextAlign.left, FontStyle.normal),
                     _createTitle("Nombre:", 14, TextAlign.left),
-                    _createText(postulante[0]["nombre"], 14, TextAlign.left,
+                    _createText(pasante.nombre, 14, TextAlign.left,
                         FontStyle.normal),
                     _createTitle("Segundo Nombre:", 14, TextAlign.left),
-                    _createText(postulante[0]["segundo_nombre"], 14,
+                    _createText(pasante.segundo_nombre, 14,
                         TextAlign.left, FontStyle.normal),
                     _createTitle("Apellido Paterno:", 14, TextAlign.left),
-                    _createText(postulante[0]["apellido_paterno"], 14,
+                    _createText(pasante.apellido_paterno, 14,
                         TextAlign.left, FontStyle.normal),
                     _createTitle("Apellido Materno:", 14, TextAlign.left),
-                    _createText(postulante[0]["apellido_materno"], 14,
+                    _createText(pasante.apellido_materno, 14,
                         TextAlign.left, FontStyle.normal),
                     _createTitle("Sexo", 14, TextAlign.left),
                     _createText(postulante[0]["sexo"], 14, TextAlign.left,
@@ -156,11 +153,11 @@ class _ServicioAndres extends State<ServicioAndres> {
                     _createText("0" + postulante[0]["telefono_i"].toString(),
                         14, TextAlign.left, FontStyle.normal),
                     _createTitle("Expectativa", 14, TextAlign.left),
-                    _createText("0" + postulante[0]["expectativa"].toString(),
+                    _createText("\$" + postulante[0]["expectativa"].toString(),
                         14, TextAlign.left, FontStyle.normal),
                     _createTitle("Último ingreso", 14, TextAlign.left),
                     _createText(
-                        "0" + postulante[0]["ultimo_ingreso"].toString(),
+                        "\$" + postulante[0]["ultimo_ingreso"].toString(),
                         14,
                         TextAlign.left,
                         FontStyle.normal),
