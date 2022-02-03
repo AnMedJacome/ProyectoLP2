@@ -42,7 +42,7 @@ class _HomePasanteView extends State<HomePasanteView> {
           icon: Icon(Icons.home),
           label: "Inicio",
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Mensajería"),
+        BottomNavigationBarItem(icon: Icon(Icons.view_list_outlined), label: "Postulaciones"),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_pin_circle),
           label: "Perfil",
