@@ -6,7 +6,10 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:passantic/constants/colors.dart';
+import 'package:passantic/utils/globals.dart' as globals;
 import 'package:http/http.dart' as http;
+import 'package:passantic/ui/views/natalia/homeEmpresaView.dart';
+import 'package:passantic/ui/views/natalia/homePasanteView.dart';
 import 'dart:convert';
 import 'dart:core';
 
@@ -59,20 +62,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String dropdownFiltro = 'TODOS';
-  String dropdownPriori = 'NINGUNO';
+  String _dropdownFiltro = 'TODOS';
+  String _dropdownPriori = 'NINGUNO';
+  int _index = 0;
   List postulantes = [];
 
-  getUsers(String page) async{
-    http.Response response = await http.get(Uri.http("localhost:3002", page));
-    var data = json.decode(response.body);
-    setState(() {
-      postulantes = data;
-    });
-  }
-
   getUsersFilter(String filtro) async {
-    http.Response response = await http.post(Uri.parse("http://localhost:3002/filtro?cargo="+filtro));
+    http.Response response = await http.post(Uri.parse("http://localhost:3002/filtro?cargo="+filtro+"&id="+globals.usuario));
+    debugPrint(globals.usuario);
     var data = json.decode(response.body);
     setState(() {
       postulantes = data;
@@ -80,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   getUsersPriori(String filtro) async {
-    http.Response response = await http.post(Uri.parse("http://localhost:3002/prioridad?cargo="+filtro));
+    http.Response response = await http.post(Uri.parse("http://localhost:3002/prioridad?cargo="+filtro+"&id="+globals.usuario));
     var data = json.decode(response.body);
     setState(() {
       postulantes = data;
@@ -90,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    getUsers("/filtro");
+    getUsersFilter("T");
   }
 
   void _mostrarInformacion(cedula) async{
@@ -178,10 +175,12 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
   }
+  
   String getDateInfo(String fecha){
     List<String> lfecha = fecha.split("T")[0].split("-");
     return lfecha[2]+"-"+lfecha[1]+"-"+lfecha[0];
   }
+  
   Text _createText(String str, double size,TextAlign al, FontStyle fst){
     return Text(
       str,
@@ -225,6 +224,8 @@ class _MyHomePageState extends State<MyHomePage> {
       itemCount: postulantes.length,
       itemBuilder: (BuildContext context, int indice) {
         return Card(
+          borderOnForeground: true,
+          color: AppColors.mainColor,
           child: Row(
             children: <Widget>[
               Expanded(
@@ -234,6 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                     shape: BoxShape.circle,
+                    color: Colors.white,
                     image: DecorationImage(
                       image: _convertirBlobAImagen(postulantes[indice]["foto"]).image,
                     ),
@@ -347,9 +349,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: <Widget>[
-          IconButton(onPressed: null, icon: const Icon(Icons.help, size: 25,color: Colors.black45,),)
-        ],
+        automaticallyImplyLeading: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back,color: Colors.black87,),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        backgroundColor: AppColors.background,
+        elevation: 0,
       ),
       body: Column(
         children: <Widget>[
@@ -361,13 +369,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   iconEnabledColor: Colors.black,
                   icon: const Icon(Icons.arrow_downward),
                   iconSize: 25,
-                  value: dropdownFiltro,
+                  value: _dropdownFiltro,
                   elevation: 16,
                   style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
                   focusColor: AppColors.mainColor,
+                  underline: Container(
+                    height: 2,
+                    color: AppColors.primaryColor,
+                  ),
                   onChanged: (String? filtro) {
                     setState(() {
-                      dropdownFiltro = filtro!;
+                      _dropdownFiltro = filtro!;
                       switch (filtro){
                         case "ADMINISTRADOR(A) DE BASE DE DATOS":
                           getUsersFilter("BD");
@@ -403,14 +415,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   iconEnabledColor: Colors.black,
                   icon: const Icon(Icons.arrow_downward),
                   iconSize: 25,
-                  value: dropdownPriori,
+                  value: _dropdownPriori,
                   elevation: 16,
                   style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
                   focusColor: AppColors.mainColor,
+                  underline: Container(
+                    height: 2,
+                    color: AppColors.primaryColor,
+                  ),
                   onChanged: (String? filtro) {
                     setState(() {
-                      dropdownPriori = filtro!;
-                      switch (filtro+"-"+dropdownFiltro){
+                      _dropdownPriori = filtro!;
+                      switch (filtro+"-"+_dropdownFiltro){
                         case "FECHA DE SOLICITUD-ADMINISTRADOR(A) DE BASE DE DATOS":
                          getUsersPriori("BDP1");
                           break;
@@ -463,7 +479,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   isExpanded: true,
                 ),
               ),
-              const Divider(color: Colors.grey,),
+              const Divider(color: Colors.black,),
               Container(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.only(left: 20),
@@ -475,27 +491,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                 ),
               ),
-              const Divider(color: Colors.grey,),
+              const Divider(color: Colors.black,),
             ],
           ),
           Expanded(
             child: _mostrarLista(),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Inicio",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: "Mensajería"
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: "Perfil",
           ),
         ],
       ),

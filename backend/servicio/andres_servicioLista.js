@@ -32,28 +32,17 @@ app.listen(3002, () =>{
 var query = "select cedula, nombre, apellido_paterno, apellido_materno, cargo, foto, fecha from ( "+
 "select pos.puesto_id, p.nombre, p.apellido_materno, p.apellido_paterno, p.foto, pos.fecha, p.cedula "+
 "from postulacion pos "+
-"inner join (perfil p, puesto pues, pasante pas) " +
-"on pos.pasante=p.cedula and pos.puesto_id=pues.puesto_id and p.cedula = pas.cedula "+
-"where pos.estado != 2 and pas.estado != 2 and pues.vacantes > 0 "+
-") ps "+
-"inner join puesto p on ps.puesto_id = p.puesto_id ";
+"inner join (perfil p, puesto pues, pasante pas, empresa e) " +
+"on pos.pasante=p.cedula and pos.puesto_id=pues.puesto_id and p.cedula = pas.cedula and pues.empresa = e.ruc "+
+"where pos.estado != 2 and pas.estado != 2 and pues.vacantes > 0 and e.usuario = '";
 
 var prioquery = "select nombre, apellido_materno, cargo, promedio, fecha, foto, cedula from ( "+
 "select u.promedio, post.fecha, post.puesto_id, c.cedula, p.nombre, p.apellido_paterno, "+
 "p.apellido_materno, p.foto from curriculum c "+
-"inner join (postulacion post, universidad u, perfil p, pasante pas, puesto pues) "+
+"inner join (postulacion post, universidad u, perfil p, pasante pas, puesto pues, empresa e) "+
 "on (post.pasante=c.cedula and c.cedula=u.cedula and c.cedula=p.cedula "+
-"and p.cedula = pas.cedula and post.puesto_id=pues.puesto_id) "+
-"where post.estado != 2 and pas.estado != 2 and pues.vacantes > 0 "+
-") pox "+
-"inner join puesto p on pox.puesto_id = p.puesto_id ";
-
-
-
-app.get('/', (req, res) =>{
-    res.json("Pantalla principal -> Ingrese a uno de los links para poder ver: orden"+
-    "por prioridad (localhost:3001/prioridad) o filtrar los postulantes (localhost:3001/filtro)");
-});
+"and p.cedula = pas.cedula and post.puesto_id=pues.puesto_id and pues.empresa = e.ruc) "+
+"where post.estado != 2 and pas.estado != 2 and pues.vacantes > 0 and e.usuario = '";
 
 app.get('/info', (req, res) =>{
     var infqy = "select p.*, u.promedio, u.ingreso, i.nombre as nombre_i, i.direccion as direccion_i, i.telefono as telefono_i, c.expectativa, c.ultimo_ingreso from perfil p "+
@@ -77,18 +66,30 @@ app.post('/info', (req, res, next) =>{
 
 app.get('/filtro', (req, res) =>{
     var qy;
+    console.log(req.query.id);
     switch (req.query.cargo){
         case 'BD':
-            qy = query + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS'";
+            qy = query + req.query.id +
+            "') ps " +
+            "inner join puesto p on ps.puesto_id = p.puesto_id " +
+            " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS'";
             break;
         case 'DW':
-            qy = query + " where cargo = 'DESARROLLADOR(A) WEB'";
+            qy = query + req.query.id +
+            "') ps " +
+            "inner join puesto p on ps.puesto_id = p.puesto_id " +
+            " where cargo = 'DESARROLLADOR(A) WEB'";
             break;
         case 'CONT':
-            qy = query + " where cargo = 'CONTADOR(A)'";
+            qy = query + req.query.id +
+            "') ps " +
+            "inner join puesto p on ps.puesto_id = p.puesto_id " +
+            " where cargo = 'CONTADOR(A)'";
             break;
         default:
-            qy = query;
+            qy = query + req.query.id +
+            "') ps " +
+            "inner join puesto p on ps.puesto_id = p.puesto_id ";
             break;
     }
     obtenerDatos(conexion, qy, (resultado) => {
@@ -100,16 +101,27 @@ app.post('/filtro', (req, res, next) =>{
     var qy;
     switch (req.query.cargo){
         case 'BD':
-            qy = query + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS'";
+            qy = query + req.query.id +
+            "') ps " +
+            "inner join puesto p on ps.puesto_id = p.puesto_id " +
+            " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS'";
             break;
         case 'DW':
-            qy = query + " where cargo = 'DESARROLLADOR(A) WEB'";
+            qy = query + req.query.id +
+            "') ps " +
+            "inner join puesto p on ps.puesto_id = p.puesto_id " +
+            " where cargo = 'DESARROLLADOR(A) WEB'";
             break;
         case 'CONT':
-            qy = query + " where cargo = 'CONTADOR(A)'";
+            qy = query + req.query.id +
+            "') ps " +
+            "inner join puesto p on ps.puesto_id = p.puesto_id " +
+            " where cargo = 'CONTADOR(A)'";
             break;
         default:
-            qy = query;
+            qy = query + req.query.id +
+            "') ps " +
+            "inner join puesto p on ps.puesto_id = p.puesto_id ";
             break;
     }
     obtenerDatos(conexion, qy, (resultado) => {
@@ -121,40 +133,75 @@ app.post('/prioridad', (req, res, next) =>{
     var qy;
     switch (req.query.cargo){
         case 'BDP1':
-            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by fecha asc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by fecha asc";
             break;
         case 'DWP1':
-            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by fecha asc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'DESARROLLADOR(A) WEB' order by fecha asc";
             break;
         case 'CONTP1':
-            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by fecha asc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'CONTADOR(A)' order by fecha asc";
             break;
         case 'TP1':
-            qy = prioquery  + " order by fecha asc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " order by fecha asc";
             break;
         case 'BDP2':
-            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
             break;
         case 'DWP2':
-            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
             break;
         case 'CONTP2':
-            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'CONTADOR(A)' order by promedio desc";
             break;
         case 'TP2':
-            qy = prioquery  + " order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " order by promedio desc";
             break;
         case 'BDP':
-            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
             break;
         case 'DWP':
-            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
             break;
         case 'CONTP':
-            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'CONTADOR(A)' order by promedio desc";
             break;
         default:
-            qy = prioquery ;
+            qy = prioquery + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id ";
             break;
     }
     obtenerDatos(conexion, qy, (resultado) => {
@@ -166,40 +213,75 @@ app.get('/prioridad', (req, res) =>{
     var qy;
     switch (req.query.cargo){
         case 'BDP1':
-            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by fecha asc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by fecha asc";
             break;
         case 'DWP1':
-            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by fecha asc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'DESARROLLADOR(A) WEB' order by fecha asc";
             break;
         case 'CONTP1':
-            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by fecha asc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'CONTADOR(A)' order by fecha asc";
             break;
         case 'TP1':
-            qy = prioquery  + " order by fecha asc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " order by fecha asc";
             break;
         case 'BDP2':
-            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
             break;
         case 'DWP2':
-            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
             break;
         case 'CONTP2':
-            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'CONTADOR(A)' order by promedio desc";
             break;
         case 'TP2':
-            qy = prioquery  + " order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " order by promedio desc";
             break;
         case 'BDP':
-            qy = prioquery  + " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'ADMINISTRADOR(A) DE BASE DE DATOS' order by promedio desc";
             break;
         case 'DWP':
-            qy = prioquery  + " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'DESARROLLADOR(A) WEB' order by promedio desc";
             break;
         case 'CONTP':
-            qy = prioquery  + " where cargo = 'CONTADOR(A)' order by promedio desc";
+            qy = prioquery  + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id " +
+            " where cargo = 'CONTADOR(A)' order by promedio desc";
             break;
         default:
-            qy = prioquery ;
+            qy = prioquery + req.query.id +
+            "') pox " +
+            "inner join puesto p on pox.puesto_id = p.puesto_id ";
             break;
     }
     obtenerDatos(conexion, qy, (resultado) => {
