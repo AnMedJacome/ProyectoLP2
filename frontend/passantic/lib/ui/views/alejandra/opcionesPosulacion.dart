@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:passantic/constants/colors.dart';
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Oferta',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: AppColors.mainColor,
+      ),
+      home: const MyHomePage(title: 'Postulacion'),
+    );
+  }
+}
 class OpcionesPostulacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -160,7 +173,9 @@ class _GridView{
       mainAxisSpacing: 10,
       crossAxisCount: 1,
       children: <Widget>[
-        Container(
+        SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.only(left: 20),
           child: Row(
@@ -197,8 +212,10 @@ class _GridView{
             ],
           ),
           color: Colors.grey[100],
-        ),
-        Container(
+        )),
+        SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.only(left: 20),
           child: Row(
@@ -235,8 +252,10 @@ class _GridView{
             ],
           ),
           color: Colors.grey[100],
-        ),
-        Container(
+        )),
+        SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.only(left: 20),
           child: Row(
@@ -273,8 +292,10 @@ class _GridView{
             ],
           ),
           color: Colors.grey[100],
-        ),
-        Container(
+        )),
+        SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Container(
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.only(left: 20),
           child: Row(
@@ -311,7 +332,7 @@ class _GridView{
             ],
           ),
           color: Colors.grey[100],
-        ),
+        )),
       ],
 
     );
